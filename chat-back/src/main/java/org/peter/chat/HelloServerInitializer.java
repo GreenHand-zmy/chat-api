@@ -1,4 +1,4 @@
-package org.peter.chatback;
+package org.peter.chat;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

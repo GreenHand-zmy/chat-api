@@ -1,4 +1,4 @@
-package org.peter.chatback;
+package org.peter.chat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

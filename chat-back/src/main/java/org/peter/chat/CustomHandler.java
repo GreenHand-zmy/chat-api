@@ -1,4 +1,4 @@
-package org.peter.chatback;
+package org.peter.chat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -7,8 +7,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
-
-import java.nio.charset.Charset;
 
 /**
  * 对于请求来讲,其实相当于[入站,入境]

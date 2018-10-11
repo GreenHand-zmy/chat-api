@@ -1,4 +1,4 @@
-package org.peter.chatback;
+package org.peter.chat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
