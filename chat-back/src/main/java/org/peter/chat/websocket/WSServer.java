@@ -5,39 +5,67 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * websocket服务器
  */
+@Component
 public class WSServer {
+    private Logger logger = LoggerFactory.getLogger(WSServer.class);
+
     // ws端口号
     @Value("${chat.webSocket.port}")
-    private int wsPort;
+    private int wsPort = 8090;
 
-    public static void main(String[] args) throws InterruptedException {
-        // 定义一对线程组
-        // 主线程组,用于接受客户端的连接,但是不做任何处理,跟老板一样,不做事
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
+    // 定义一对线程组
+    // 主线程组,用于接受客户端的连接,但是不做任何处理,跟老板一样,不做事
+    private EventLoopGroup bossGroup;
 
-        // 从线程组,老板线程组会把任务丢给他,让手下线程组做任务
-        EventLoopGroup workGroup = new NioEventLoopGroup();
+    // 从线程组,老板线程组会把任务丢给他,让手下线程组做任务
+    private EventLoopGroup workGroup;
 
-        try {
-            // netty服务器的创建,ServerBootstrap是一个启动类
-            ServerBootstrap serverBootstrap = new ServerBootstrap();
-            serverBootstrap.group(bossGroup, workGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new WSServerInitializer());
+    // netty服务器的创建,ServerBootstrap是一个启动类
+    private ServerBootstrap serverBootstrap;
 
-            // 启动server,并且设置8088为启动的端口号,同时启动为同步
-            ChannelFuture channelFuture = serverBootstrap.bind(8090).sync();
+    private static volatile WSServer instance;
 
-            // 监听关闭的channel,设置为同步方式
-            channelFuture.channel().closeFuture().sync();
-        } finally {
-            bossGroup.shutdownGracefully();
-            workGroup.shutdownGracefully();
+    private WSServer() {
+        bossGroup = new NioEventLoopGroup();
+        workGroup = new NioEventLoopGroup();
+        serverBootstrap = new ServerBootstrap();
+
+        // netty服务器的创建,ServerBootstrap是一个启动类
+        serverBootstrap.group(bossGroup, workGroup)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new WSServerInitializer());
+    }
+
+    public static WSServer getInstance() {
+        if (instance == null) {
+            synchronized (WSServer.class) {
+                if (instance == null) {
+                    instance = new WSServer();
+                }
+            }
         }
+        return instance;
+    }
+
+    public void start() {
+        try {
+            ChannelFuture channelFuture = serverBootstrap.bind(wsPort);
+            logger.info("netty websocket server绑定在 " + wsPort + " 启动完毕");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void shutdown() {
+        bossGroup.shutdownGracefully();
+        workGroup.shutdownGracefully();
     }
 }
