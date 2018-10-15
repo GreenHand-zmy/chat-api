@@ -1,4 +1,4 @@
-package org.peter.chat;
+package org.peter.chat.generator;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
