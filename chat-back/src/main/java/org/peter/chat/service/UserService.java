@@ -1,5 +1,26 @@
 package org.peter.chat.service;
 
-public interface UserService {
+import org.peter.chat.domain.vo.UserVo;
+import org.peter.chat.entity.User;
 
+public interface UserService {
+    /**
+     * 判断用户名是否已经存在
+     *
+     * @param username 用户名
+     * @return
+     */
+    boolean queryUsernameIsExist(String username);
+
+    /**
+     * 通过用户名和密码查询用户
+     */
+    User queryUserForLogin(String username, String password);
+
+    /**
+     * 用户注册
+     *
+     * @return
+     */
+    UserVo registerUser(User user);
 }
