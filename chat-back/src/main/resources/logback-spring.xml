@@ -72,6 +72,7 @@
     <root level="${log.level}">
         <appender-ref ref="ERROR" />
         <appender-ref ref="DEBUG" />
+        <appender-ref ref="console" />
     </root>
 
     <logger name="org.peter.chat.mapper" level="debug">
