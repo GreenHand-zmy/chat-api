@@ -4,14 +4,17 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.peter.chat.exception.ChatCheckException;
-import org.peter.chat.exception.UserExistedCheckException;
+import org.peter.chat.enums.ChatStatus;
+import org.peter.chat.exception.BusinessException;
 import org.peter.chat.utils.ResultBean;
 import org.springframework.stereotype.Component;
 
+/**
+ * 控制器异常处理器
+ */
 @Component
 @Aspect
-public class ExceptionHandlerAop {
+public class ControllerExceptionHandlerAop {
     /**
      * execution(* com.sample.service.impl..*.*(..))
      * execution（）
@@ -41,12 +44,12 @@ public class ExceptionHandlerAop {
     private ResultBean<?> handException(Throwable e) {
         ResultBean<?> resultBean;
 
-        if (e instanceof UserExistedCheckException) {
-            resultBean = new ResultBean<>().failed(e.getLocalizedMessage());
-        } else if (e instanceof ChatCheckException) {
-            resultBean = new ResultBean<>().failed(e.getLocalizedMessage());
+        if (e instanceof BusinessException) {
+            resultBean = new ResultBean<>().failed(e.getMessage());
         } else {
-            resultBean = new ResultBean<>().failed(e.getLocalizedMessage());
+            // 发生其他异常,不返回给前端,但是会打印日志
+            resultBean = new ResultBean<>()
+                    .failed(ChatStatus.APP_RUNTIME_EXCEPTION.getMessage());
         }
         return resultBean;
     }

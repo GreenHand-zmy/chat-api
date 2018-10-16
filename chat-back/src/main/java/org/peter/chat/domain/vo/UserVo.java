@@ -33,4 +33,9 @@ public class UserVo {
      * 用户二维码
      */
     private String qrcode;
+
+    /**
+     * 用户token
+     */
+    private String token;
 }

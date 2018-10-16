@@ -30,7 +30,7 @@ public class ResultBean<T> {
         return this;
     }
 
-    public ResultBean success(T data) {
+    public ResultBean<T> success(T data) {
         code = ResultStatus.SUCCESS.getCode();
         info = ResultStatus.SUCCESS.getInfo();
         this.data = data;

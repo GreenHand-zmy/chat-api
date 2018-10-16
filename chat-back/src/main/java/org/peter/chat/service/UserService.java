@@ -15,12 +15,20 @@ public interface UserService {
     /**
      * 通过用户名和密码查询用户
      */
-    User queryUserForLogin(String username, String password);
+    UserVo userLogin(String username, String password);
 
     /**
      * 用户注册
      *
      * @return
      */
-    UserVo registerUser(User user);
+    UserVo userRegister(User user);
+
+    /**
+     * 通过token查找用户
+     *
+     * @param token
+     * @return
+     */
+    UserVo queryByToken(String token);
 }

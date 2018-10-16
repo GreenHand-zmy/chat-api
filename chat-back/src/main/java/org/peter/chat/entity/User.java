@@ -60,6 +60,11 @@ public class User implements Serializable {
     private String qrcode;
 
     /**
+     * 用户token
+     */
+    private String token;
+
+    /**
      * 用户终端编号
      */
     private String clientId;

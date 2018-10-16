@@ -1,7 +1,5 @@
 package org.peter.chat.utils;
 
-import org.peter.chat.exception.ChatCheckException;
-
 public class CheckUtil {
     public static void check(boolean condition, String message) {
         if (!condition) {
@@ -10,6 +8,6 @@ public class CheckUtil {
     }
 
     private static void fail(String message) {
-        throw new ChatCheckException(message);
+        throw new RuntimeException(message);
     }
 }
