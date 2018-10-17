@@ -3,6 +3,7 @@ package org.peter.chat.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.n3r.idworker.Sid;
+import org.peter.chat.config.properties.ChatProperties;
 import org.peter.chat.domain.vo.UserVo;
 import org.peter.chat.entity.User;
 import org.peter.chat.enums.ChatStatus;
@@ -27,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private Sid sid;
+
+    @Autowired
+    private ChatProperties chatProperties;
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -83,6 +87,7 @@ public class UserServiceImpl implements UserService {
                 , user.getUsername()));
 
         // 设置用户属性
+        user.setNickname(chatProperties.getRandomNickname()); //后期从配置文件中获取
         user.setFaceImage("");
         user.setFaceImageBig("");
         user.setQrcode("");
@@ -97,6 +102,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public UserVo queryByToken(String token) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("token", token);

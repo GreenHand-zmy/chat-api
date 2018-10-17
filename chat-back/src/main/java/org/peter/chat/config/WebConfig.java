@@ -1,6 +1,7 @@
 package org.peter.chat.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.peter.chat.config.properties.ChatProperties;
 import org.peter.chat.config.properties.LoginInterceptorProperties;
 import org.peter.chat.web.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableConfigurationProperties(LoginInterceptorProperties.class)
+@EnableConfigurationProperties({LoginInterceptorProperties.class, ChatProperties.class})
 @Slf4j
 public class WebConfig implements WebMvcConfigurer {
     @Autowired

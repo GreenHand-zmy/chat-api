@@ -30,3 +30,6 @@ chat:
       /**
     exclude:
       /user/registerOrLogin
+  setting:
+    defaultNicknameList:
+      美到没朋友,逺来是你,淡淡的优雅,黑名单。,龍飛鳳ゝ舞,闹钟你别闹→_→,做個沒心沒肺菂尐女亽
