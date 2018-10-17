@@ -25,3 +25,8 @@ chat:
   webSocket:
     port: 8090
     websocketPath: /ws
+  login-interceptor:
+    include:
+      /**
+    exclude:
+      /user/registerOrLogin
