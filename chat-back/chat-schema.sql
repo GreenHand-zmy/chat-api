@@ -12,7 +12,7 @@ CREATE TABLE `friends_relation` (
   `id` varchar(64) NOT NULL COMMENT '关系表编号',
   `me_user_id` varchar(64) NOT NULL COMMENT '本人编号',
   `friend_user_id` varchar(64) NOT NULL COMMENT '好友编号',
-  `gmt_created` datetime NOT NULL COMMENT '记录产生时间',
+  `gmt_created` datetime DEFAULT NULL COMMENT '记录产生时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -35,6 +35,6 @@ CREATE TABLE `users` (
   `client_id` varchar(64) DEFAULT NULL COMMENT '用户终端编号',
   `token` varchar(64) NOT NULL COMMENT '用户token',
   `gmt_created` datetime NOT NULL COMMENT '记录产生时间',
-  `gmt_modified` datetime NOT NULL COMMENT '记录修改时间',
+  `gmt_modified` datetime DEFAULT NULL COMMENT '记录修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
