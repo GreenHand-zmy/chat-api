@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  * @see ControllerExceptionHandler
  */
 //@Component
-@Aspect
+//@Aspect
 @Deprecated
 public class ControllerExceptionHandlerAop {
     /**
