@@ -12,6 +12,8 @@
 #    password: test
 #    schema: classpath:h2/schema-h2.sql
 #    data: classpath:h2/data-h2.sql
+server:
+  port: 8081
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/chat?useSSL=false

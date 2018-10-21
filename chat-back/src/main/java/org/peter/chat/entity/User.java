@@ -7,10 +7,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author zmy
@@ -32,11 +36,17 @@ public class User implements Serializable {
     /**
      * 用户名
      */
+    @NotEmpty
+    @Length(min = 4, max = 20)
+    @Pattern(regexp = "[a-zA-Z_-]{4,20}")
     private String username;
 
     /**
      * 密码
      */
+    @NotEmpty
+    @Length
+    @Pattern(regexp = "[a-zA-z0-9]{6,20}")
     private String password;
 
     /**

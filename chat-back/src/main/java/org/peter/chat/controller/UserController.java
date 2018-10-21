@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -16,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/registerOrLogin")
-    ResultBean<UserVo> registerOrLogin(User user) {
+    ResultBean<UserVo> registerOrLogin(@Valid User user) {
         // 查询用户名是否已经存在
         boolean usernameIsExist = userService
                 .queryUsernameIsExist(user.getUsername());
