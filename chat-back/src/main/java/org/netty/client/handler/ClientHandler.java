@@ -9,7 +9,7 @@ import org.netty.packet.PacketCodeC;
 import org.netty.packet.request.LoginRequestPacket;
 import org.netty.packet.response.LoginResponsePacket;
 import org.netty.packet.response.MessageResponsePacket;
-import org.netty.util.LoginUtil;
+import org.netty.util.SessionUtil;
 
 @Slf4j
 @Deprecated
@@ -19,8 +19,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 创建数据包
         Packet loginPacket = new LoginRequestPacket();
-        ((LoginRequestPacket) loginPacket).setUserId("sjdasdxasd")
-                .setUsername("zmy")
+        ((LoginRequestPacket) loginPacket).setUsername("zmy")
                 .setPassword("admin");
         // 将数据包构造为byteBuf
         ByteBuf loginRequest = PacketCodeC.instance().encode(loginPacket);
@@ -45,7 +44,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     private void isLoginSuccess(ChannelHandlerContext ctx, LoginResponsePacket loginResponsePacket) {
         if (loginResponsePacket.isSuccess()) {
             // 将channel标记为已登录
-            LoginUtil.markAsLogin(ctx.channel());
+//            SessionUtil.markAsLogin(ctx.channel());
             log.info("登录成功");
         } else {
             log.info("登录失败,原因: " + loginResponsePacket.getMsg());

@@ -99,7 +99,6 @@ public class PacketCodeC {
         PacketCodeC codeC = PacketCodeC.instance();
 
         LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
-        loginRequestPacket.setUserId("asdasdasd");
         loginRequestPacket.setUsername("zmy");
         loginRequestPacket.setPassword("123");
 

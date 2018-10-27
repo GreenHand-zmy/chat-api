@@ -9,6 +9,9 @@ import org.netty.packet.response.MessageResponsePacket;
 public class MessageResponseHandler extends SimpleChannelInboundHandler<MessageResponsePacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageResponsePacket responsePacket) throws Exception {
-        log.info("收到服务器数据: " + responsePacket.getMessage());
+        String fromUserId = responsePacket.getFromUserId();
+        String fromUserName = responsePacket.getFromUsername();
+
+        log.info(fromUserId + ":" + fromUserName + " -> " + responsePacket .getMessage());
     }
 }

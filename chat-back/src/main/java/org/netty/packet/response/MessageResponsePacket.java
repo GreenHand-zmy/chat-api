@@ -8,6 +8,8 @@ import org.netty.packet.Packet;
 @Data
 @Accessors(chain = true)
 public class MessageResponsePacket implements Packet {
+    private String fromUserId;
+    private String fromUsername;
     private String message;
 
     @Override

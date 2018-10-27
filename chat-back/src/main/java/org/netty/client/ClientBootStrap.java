@@ -9,8 +9,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.netty.client.handler.ClientInitializer;
 import org.netty.packet.PacketCodeC;
+import org.netty.packet.request.LoginRequestPacket;
 import org.netty.packet.request.MessageRequestPacket;
-import org.netty.util.LoginUtil;
+import org.netty.util.SessionUtil;
 
 import java.util.Scanner;
 
@@ -58,18 +59,33 @@ public class ClientBootStrap {
     }
 
     private static void startConsoleThread(Channel channel) {
+        Scanner sc = new Scanner(System.in);
+        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
         new Thread(() -> {
             while (!Thread.interrupted()) {
                 // 开启控制台
-                if (LoginUtil.hasLogin(channel)) {
-                    System.out.println("输入消息发送到客户端");
-                    Scanner sc = new Scanner(System.in);
-                    String line = sc.nextLine();
+                if (!SessionUtil.hasLogin(channel)) {
+                    System.out.println("请输入用户名登录");
+                    String username = sc.nextLine();
+                    loginRequestPacket.setUsername(username)
+                            .setPassword("pwd");
 
-                    MessageRequestPacket packet = new MessageRequestPacket();
-                    packet.setMessage(line);
-                    ByteBuf byteBuf = PacketCodeC.instance().encode(packet);
-                    channel.writeAndFlush(byteBuf);
+                    channel.writeAndFlush(loginRequestPacket);
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    String toUserId = sc.next();
+                    String message = sc.next();
+
+                    MessageRequestPacket messageRequestPacket = new MessageRequestPacket();
+                    messageRequestPacket.setToUserId(toUserId)
+                            .setMessage(message);
+
+                    channel.writeAndFlush(messageRequestPacket);
                 }
             }
         }).start();

@@ -8,7 +8,6 @@ import org.netty.packet.Packet;
 @Data
 @Accessors(chain = true)
 public class LoginRequestPacket implements Packet {
-    private String userId;
     private String username;
     private String password;
 

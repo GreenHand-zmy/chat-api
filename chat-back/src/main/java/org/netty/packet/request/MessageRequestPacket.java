@@ -8,6 +8,8 @@ import org.netty.packet.Packet;
 @Data
 @Accessors(chain = true)
 public class MessageRequestPacket implements Packet {
+    // 接受信息的用户编号
+    private String toUserId;
     // 信息
     private String message;
 

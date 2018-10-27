@@ -1,5 +1,6 @@
 package org.netty.server;
 
+import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
@@ -8,6 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.netty.common.StatisticsHandler;
 import org.netty.server.handler.ServerInitializer;
+import org.netty.util.SessionUtil;
 
 import java.math.BigDecimal;
 
@@ -46,6 +48,10 @@ public class ServerBootStrap {
                     Thread.sleep(10000);
                     log.info("服务器当前流量为 " + StatisticsHandler.getComingBytes()
                             .divide(new BigDecimal(1024), 2, BigDecimal.ROUND_HALF_UP) + "kb");
+
+                    log.info("当前连接数为: " + StatisticsHandler.getClientCount());
+
+                    log.info(JSON.toJSONString(SessionUtil.userIdChannelMap));
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
