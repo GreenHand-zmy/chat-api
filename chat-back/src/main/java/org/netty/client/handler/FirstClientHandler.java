@@ -1,4 +1,4 @@
-package org.netty.client;
+package org.netty.client.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,15 +9,27 @@ import java.nio.charset.Charset;
 import java.util.Date;
 
 @Slf4j
+@Deprecated
 public class FirstClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        while (true){
-            ByteBuf byteBuf = getByteBuf(ctx);
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ByteBuf byteBuf = getByteBuf(ctx);
+                ctx.writeAndFlush(byteBuf);
+            }
+        }).start();
+    }
 
-            ctx.writeAndFlush(byteBuf);
-        }
-
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf response = (ByteBuf) msg;
+        log.info("客户端收到服务器响应" + response.toString(Charset.forName("UTF-8")));
     }
 
     private ByteBuf getByteBuf(ChannelHandlerContext ctx) {

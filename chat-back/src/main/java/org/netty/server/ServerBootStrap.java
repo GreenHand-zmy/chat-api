@@ -6,6 +6,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.netty.common.StatisticsHandler;
+import org.netty.server.handler.ServerInitializer;
+
+import java.math.BigDecimal;
 
 @Slf4j
 public class ServerBootStrap {
@@ -20,6 +24,8 @@ public class ServerBootStrap {
                 .childHandler(new ServerInitializer()); // 服务器初始化
 
         bind(bootstrap, 8081);
+
+        showStatistics();
     }
 
     private static void bind(final ServerBootstrap serverBootstrap, final int port) {
@@ -31,5 +37,19 @@ public class ServerBootStrap {
                         bind(serverBootstrap, port + 1);
                     }
                 });
+    }
+
+    private static void showStatistics() {
+        new Thread(() -> {
+            try {
+                while (true) {
+                    Thread.sleep(10000);
+                    log.info("服务器当前流量为 " + StatisticsHandler.getComingBytes()
+                            .divide(new BigDecimal(1024), 2, BigDecimal.ROUND_HALF_UP) + "kb");
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }
