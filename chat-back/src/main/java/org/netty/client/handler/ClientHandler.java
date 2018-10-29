@@ -4,12 +4,11 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
-import org.netty.packet.Packet;
-import org.netty.packet.PacketCodeC;
-import org.netty.packet.request.LoginRequestPacket;
-import org.netty.packet.response.LoginResponsePacket;
-import org.netty.packet.response.MessageResponsePacket;
-import org.netty.util.SessionUtil;
+import org.netty.protocol.Packet;
+import org.netty.protocol.PacketCodeC;
+import org.netty.protocol.request.LoginRequestPacket;
+import org.netty.protocol.response.LoginResponsePacket;
+import org.netty.protocol.response.MessageResponsePacket;
 
 @Slf4j
 @Deprecated

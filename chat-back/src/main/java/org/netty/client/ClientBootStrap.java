@@ -1,16 +1,16 @@
 package org.netty.client;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.netty.client.console.ConsoleCommandManager;
+import org.netty.client.console.LoginConsoleCommand;
 import org.netty.client.handler.ClientInitializer;
-import org.netty.packet.PacketCodeC;
-import org.netty.packet.request.LoginRequestPacket;
-import org.netty.packet.request.MessageRequestPacket;
+import org.netty.protocol.request.LoginRequestPacket;
+import org.netty.protocol.request.MessageRequestPacket;
 import org.netty.util.SessionUtil;
 
 import java.util.Scanner;
@@ -60,32 +60,14 @@ public class ClientBootStrap {
 
     private static void startConsoleThread(Channel channel) {
         Scanner sc = new Scanner(System.in);
-        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
+        ConsoleCommandManager consoleCommandManager = new ConsoleCommandManager();
         new Thread(() -> {
             while (!Thread.interrupted()) {
-                // 开启控制台
                 if (!SessionUtil.hasLogin(channel)) {
-                    System.out.println("请输入用户名登录");
-                    String username = sc.nextLine();
-                    loginRequestPacket.setUsername(username)
-                            .setPassword("pwd");
-
-                    channel.writeAndFlush(loginRequestPacket);
-
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    LoginConsoleCommand loginConsoleCommand = new LoginConsoleCommand();
+                    loginConsoleCommand.exec(sc, channel);
                 } else {
-                    String toUserId = sc.next();
-                    String message = sc.next();
-
-                    MessageRequestPacket messageRequestPacket = new MessageRequestPacket();
-                    messageRequestPacket.setToUserId(toUserId)
-                            .setMessage(message);
-
-                    channel.writeAndFlush(messageRequestPacket);
+                    consoleCommandManager.exec(sc, channel);
                 }
             }
         }).start();

@@ -1,4 +1,4 @@
-package org.netty.util;
+package org.netty.attribute;
 
 import io.netty.util.AttributeKey;
 import org.netty.common.Session;

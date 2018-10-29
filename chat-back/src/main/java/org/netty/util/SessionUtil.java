@@ -1,14 +1,17 @@
 package org.netty.util;
 
 import io.netty.channel.Channel;
+import org.netty.attribute.Attributes;
 import org.netty.common.Session;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class SessionUtil {
     // userId -> channel 的映射
-    public static final Map<String, Channel> userIdChannelMap = new ConcurrentHashMap<>();
+    private static final Map<String, Channel> userIdChannelMap = new ConcurrentHashMap<>();
 
     public static void bindSession(Session session, Channel channel) {
         userIdChannelMap.put(session.getUserId(), channel);
@@ -33,5 +36,16 @@ public final class SessionUtil {
 
     public static boolean hasLogin(Channel channel) {
         return channel.hasAttr(Attributes.SESSION);
+    }
+
+    public static List<Session> getAllSession() {
+        List<Session> allSession = new ArrayList<>();
+        for (Map.Entry<String, Channel> entry : userIdChannelMap.entrySet()) {
+            Session session = getSession(entry.getValue());
+            if (session != null) {
+                allSession.add(session);
+            }
+        }
+        return allSession;
     }
 }

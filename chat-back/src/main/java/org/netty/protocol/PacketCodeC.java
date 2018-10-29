@@ -1,17 +1,18 @@
-package org.netty.packet;
+package org.netty.protocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.netty.Serializer.JSONSerializer;
 import org.netty.Serializer.Serializer;
 import org.netty.Serializer.SerializerAlgorithm;
-import org.netty.command.Command;
-import org.netty.packet.request.LoginRequestPacket;
-import org.netty.packet.request.MessageRequestPacket;
-import org.netty.packet.response.LoginResponsePacket;
-import org.netty.packet.response.MessageResponsePacket;
+import org.netty.protocol.command.Command;
+import org.netty.protocol.request.LoginRequestPacket;
+import org.netty.protocol.request.LogoutRequestPacket;
+import org.netty.protocol.request.MessageRequestPacket;
+import org.netty.protocol.response.LoginResponsePacket;
+import org.netty.protocol.response.LogoutResponsePacket;
+import org.netty.protocol.response.MessageResponsePacket;
 
-import java.nio.channels.NonReadableChannelException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +41,8 @@ public class PacketCodeC {
         packetMap.put(Command.LOGIN_RESPONSE, LoginResponsePacket.class);
         packetMap.put(Command.MESSAGE_REQUEST, MessageRequestPacket.class);
         packetMap.put(Command.MESSAGE_RESPONSE, MessageResponsePacket.class);
+        packetMap.put(Command.LOGOUT_REQUEST, LogoutRequestPacket.class);
+        packetMap.put(Command.LOGOUT_RESPONSE, LogoutResponsePacket.class);
 
         serializerMap = new HashMap<>();
         serializerMap.put(SerializerAlgorithm.JSON, new JSONSerializer());

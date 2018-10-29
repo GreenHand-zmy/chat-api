@@ -1,4 +1,4 @@
-package org.netty.packet;
+package org.netty.protocol;
 
 /**
  * 数据包定为   魔数 -> 版本号 -> 序列化算法 -> 指令 ->数据长度 -> 数据

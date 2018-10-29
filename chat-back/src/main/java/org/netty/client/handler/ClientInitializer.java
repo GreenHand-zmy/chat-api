@@ -2,10 +2,9 @@ package org.netty.client.handler;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import org.netty.common.PacketDecoder;
-import org.netty.common.PacketEncoder;
-import org.netty.common.Spliter;
+import org.netty.codec.PacketDecoder;
+import org.netty.codec.PacketEncoder;
+import org.netty.codec.Spliter;
 
 public class ClientInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -16,6 +15,7 @@ public class ClientInitializer extends ChannelInitializer<SocketChannel> {
                 .addLast(new PacketDecoder())
                 .addLast(new LoginResponseHandler())
                 .addLast(new MessageResponseHandler())
+                .addLast(new LogoutResponseHandler())
                 .addLast(new PacketEncoder());
     }
 }

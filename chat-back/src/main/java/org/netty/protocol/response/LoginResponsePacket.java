@@ -1,10 +1,10 @@
-package org.netty.packet.response;
+package org.netty.protocol.response;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.netty.command.Command;
+import org.netty.protocol.command.Command;
 import org.netty.domain.vo.UserVo;
-import org.netty.packet.Packet;
+import org.netty.protocol.Packet;
 
 @Data
 @Accessors(chain = true)

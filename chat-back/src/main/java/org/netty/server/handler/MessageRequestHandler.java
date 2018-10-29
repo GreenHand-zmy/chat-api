@@ -5,8 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.netty.common.Session;
-import org.netty.packet.request.MessageRequestPacket;
-import org.netty.packet.response.MessageResponsePacket;
+import org.netty.protocol.request.MessageRequestPacket;
+import org.netty.protocol.response.MessageResponsePacket;
 import org.netty.util.SessionUtil;
 
 @Slf4j
@@ -18,7 +18,6 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 
         // 拿到发送方的session信息
         Session session = SessionUtil.getSession(ctx.channel());
-
 
         // 响应消息
         MessageResponsePacket responsePacket = new MessageResponsePacket();

@@ -1,4 +1,4 @@
-package org.netty.command;
+package org.netty.protocol.command;
 
 public interface Command {
     // 登录请求指令
@@ -12,4 +12,10 @@ public interface Command {
 
     // 发送消息响应指令
     Byte MESSAGE_RESPONSE = 4;
+
+    // 用户登出请求指令
+    Byte LOGOUT_REQUEST = 5;
+
+    // 用户登出相应指令
+    Byte LOGOUT_RESPONSE = 6;
 }

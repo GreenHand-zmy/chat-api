@@ -51,7 +51,6 @@ public class ServerBootStrap {
 
                     log.info("当前连接数为: " + StatisticsHandler.getClientCount());
 
-                    log.info(JSON.toJSONString(SessionUtil.userIdChannelMap));
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
