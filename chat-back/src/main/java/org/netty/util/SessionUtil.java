@@ -48,4 +48,13 @@ public final class SessionUtil {
         }
         return allSession;
     }
+
+    public static List<Channel> getAllChannel() {
+        List<Channel> channelList = new ArrayList<>();
+        for (Map.Entry<String, Channel> entry : userIdChannelMap.entrySet()) {
+            channelList.add(entry.getValue());
+        }
+
+        return channelList;
+    }
 }

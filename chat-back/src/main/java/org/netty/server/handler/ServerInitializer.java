@@ -20,6 +20,7 @@ public class ServerInitializer extends ChannelInitializer<NioSocketChannel> {
                 .addLast(new LoginRequestHandler())
                 .addLast(new AuthHandler())
                 .addLast(new MessageRequestHandler())
+                .addLast(new CreateGroupRequestHandler())
                 .addLast(new LogoutRequestHandler())
                 .addLast(new PacketEncoder());
     }

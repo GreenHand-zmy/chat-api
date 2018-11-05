@@ -1,11 +1,13 @@
 package org.netty.server.handler;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.netty.common.Session;
 import org.netty.domain.vo.UserVo;
 import org.netty.protocol.request.LoginRequestPacket;
+import org.netty.protocol.request.NotifyResponsePacket;
 import org.netty.protocol.response.LoginResponsePacket;
 import org.netty.util.SessionUtil;
 
@@ -41,12 +43,20 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
             log.info(session.getUsername() + "[" + session.getUserId() + "]登陆成功");
 
 
+            // 向所有在线的用户发送上线提醒
             StringBuilder sb = new StringBuilder();
             SessionUtil.getAllSession()
                     .stream()
                     .map(Session::getUsername)
-                    .forEach(s -> sb.append(username).append(", "));
-            responsePacket.setMsg(sb.toString());
+                    .forEach(s -> sb.append(s).append(","));
+            sb.deleteCharAt(sb.lastIndexOf(","))
+                    .append(" 在线");
+            NotifyResponsePacket notifyResponsePacket = new NotifyResponsePacket();
+            notifyResponsePacket.setNotifyString(sb.toString());
+
+            for (Channel channel : SessionUtil.getAllChannel()) {
+                channel.writeAndFlush(notifyResponsePacket);
+            }
         } else {
             responsePacket.setSuccess(false)
                     .setMsg("用户名或密码错误");

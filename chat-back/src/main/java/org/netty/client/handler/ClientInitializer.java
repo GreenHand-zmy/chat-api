@@ -15,6 +15,8 @@ public class ClientInitializer extends ChannelInitializer<SocketChannel> {
                 .addLast(new PacketDecoder())
                 .addLast(new LoginResponseHandler())
                 .addLast(new MessageResponseHandler())
+                .addLast(new CreateGroupResponseHandler())
+                .addLast(new NotifyResponseHandler())
                 .addLast(new LogoutResponseHandler())
                 .addLast(new PacketEncoder());
     }

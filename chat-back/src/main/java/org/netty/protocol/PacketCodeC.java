@@ -6,9 +6,8 @@ import org.netty.Serializer.JSONSerializer;
 import org.netty.Serializer.Serializer;
 import org.netty.Serializer.SerializerAlgorithm;
 import org.netty.protocol.command.Command;
-import org.netty.protocol.request.LoginRequestPacket;
-import org.netty.protocol.request.LogoutRequestPacket;
-import org.netty.protocol.request.MessageRequestPacket;
+import org.netty.protocol.request.*;
+import org.netty.protocol.response.CreateGroupResponsePacket;
 import org.netty.protocol.response.LoginResponsePacket;
 import org.netty.protocol.response.LogoutResponsePacket;
 import org.netty.protocol.response.MessageResponsePacket;
@@ -43,6 +42,9 @@ public class PacketCodeC {
         packetMap.put(Command.MESSAGE_RESPONSE, MessageResponsePacket.class);
         packetMap.put(Command.LOGOUT_REQUEST, LogoutRequestPacket.class);
         packetMap.put(Command.LOGOUT_RESPONSE, LogoutResponsePacket.class);
+        packetMap.put(Command.NOTIFY_RESPONSE, NotifyResponsePacket.class);
+        packetMap.put(Command.CREATE_GROUP_REQUEST, CreateGroupRequestPacket.class);
+        packetMap.put(Command.CREATE_GROUP_RESPONSE, CreateGroupResponsePacket.class);
 
         serializerMap = new HashMap<>();
         serializerMap.put(SerializerAlgorithm.JSON, new JSONSerializer());
