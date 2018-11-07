@@ -125,4 +125,9 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(user, userVo);
         return userVo;
     }
+
+    @Override
+    public UserVo updateById(UserVo user) {
+        return null;
+    }
 }
