@@ -13,7 +13,7 @@
 #    schema: classpath:h2/schema-h2.sql
 #    data: classpath:h2/data-h2.sql
 server:
-  port: 8081
+  port: 8080
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/chat?useSSL=false
@@ -31,7 +31,14 @@ chat:
     include:
       /**
     exclude:
-      /user/registerOrLogin
+      - /user/registerOrLogin
+      - /swagger-ui.html
+      - /swagger-resources/**
+      - /webjars/**
+      - /v2/**
+      - /swagger-ui.html/**
+      - /error
+      - /null/**
   setting:
     defaultNicknameList:
       美到没朋友,逺来是你,淡淡的优雅,黑名单。,龍飛鳳ゝ舞,闹钟你别闹→_→,
