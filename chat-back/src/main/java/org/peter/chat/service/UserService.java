@@ -31,4 +31,19 @@ public interface UserService {
      * @return
      */
     UserVo queryByToken(String token);
+
+    /**
+     * 通过用户名查找用户
+     *
+     * @param userId
+     * @return
+     */
+    UserVo queryById(String userId);
+
+    /**
+     *
+     * @param user
+     * @return
+     */
+    UserVo updateById(UserVo user);
 }

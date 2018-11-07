@@ -29,7 +29,8 @@ chat:
     websocketPath: /ws
   login-interceptor:
     include:
-      /**
+      #- /**
+      - /error
     exclude:
       - /user/registerOrLogin
       - /swagger-ui.html

@@ -3,7 +3,7 @@ package org.peter.chat.utils;
 import javax.xml.bind.DatatypeConverter;
 import java.security.SecureRandom;
 
-public class SecureRandoms {
+public final class SecureRandoms {
     private static final int DEFAULT_HEX_LENGTH = 32;
 
     /**
@@ -23,9 +23,5 @@ public class SecureRandoms {
 
     public static String nextHex() {
         return nextHex(DEFAULT_HEX_LENGTH);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(nextHex(64));
     }
 }

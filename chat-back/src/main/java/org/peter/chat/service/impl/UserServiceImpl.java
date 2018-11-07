@@ -112,4 +112,17 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(result, userVo);
         return userVo;
     }
+
+    @Override
+    public UserVo queryById(String userId) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ChatStatus.INVALID_USER_ID,
+                    "userId={}", userId);
+        }
+
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(user, userVo);
+        return userVo;
+    }
 }
