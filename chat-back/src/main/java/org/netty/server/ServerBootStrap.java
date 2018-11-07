@@ -1,6 +1,5 @@
 package org.netty.server;
 
-import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
@@ -9,7 +8,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.netty.common.StatisticsHandler;
 import org.netty.server.handler.ServerInitializer;
-import org.netty.util.SessionUtil;
 
 import java.math.BigDecimal;
 

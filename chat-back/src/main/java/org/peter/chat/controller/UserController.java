@@ -2,9 +2,11 @@ package org.peter.chat.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.peter.chat.domain.bo.UserBo;
 import org.peter.chat.domain.vo.UserVo;
 import org.peter.chat.entity.User;
 import org.peter.chat.service.UserService;
+import org.peter.chat.utils.FileUtils;
 import org.peter.chat.utils.ResultBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,4 +41,17 @@ public class UserController {
         }
         return new ResultBean<UserVo>().success(userResult);
     }
+
+/*    @PostMapping("/face/upload")
+    ResultBean<UserVo> uploadFaceBase64(UserBo userBo) throws Exception {
+        // 获取base64字符串
+        String faceData = userBo.getFaceData();
+
+        // 临时目录
+        String userFacePath = "c:\\" + userBo.getId() + "userface64.png";
+
+        FileUtils.base64ToFile(userFacePath, faceData);
+
+
+    }*/
 }

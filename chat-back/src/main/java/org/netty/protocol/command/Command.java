@@ -18,4 +18,13 @@ public interface Command {
 
     // 用户登出相应指令
     Byte LOGOUT_RESPONSE = 6;
+
+    // 提醒响应
+    Byte NOTIFY_RESPONSE = 7;
+
+    // 创建群组请求
+    Byte CREATE_GROUP_REQUEST = 8;
+
+    // 创建群组响应
+    Byte CREATE_GROUP_RESPONSE = 9;
 }
