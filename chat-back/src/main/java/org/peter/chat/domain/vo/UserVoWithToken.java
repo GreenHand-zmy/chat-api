@@ -3,7 +3,7 @@ package org.peter.chat.domain.vo;
 import lombok.Data;
 
 @Data
-public class UserVo {
+public class UserVoWithToken {
     /**
      * 用户编号
      */

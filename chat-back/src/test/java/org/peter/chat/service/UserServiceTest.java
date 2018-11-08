@@ -2,7 +2,8 @@ package org.peter.chat.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.peter.chat.domain.vo.UserVo;
+import org.peter.chat.domain.vo.UserVoWithToken;
+import org.peter.chat.domain.vo.UserVoWithoutToken;
 import org.peter.chat.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +34,7 @@ public class UserServiceTest {
     @Test
     public void userLoginSuccess() {
         // =====================正常登录==============================
-        UserVo result = userService.userLogin("admin", "123");
+        UserVoWithToken result = userService.userLogin("admin", "123");
         assertNotNull(result);
         System.out.println(result);
     }
@@ -41,7 +42,7 @@ public class UserServiceTest {
     @Test
     public void userLoginFail() {
         // =====================账号密码错误===========================
-        UserVo result = userService.userLogin("xxxxx", "1234");
+        UserVoWithToken result = userService.userLogin("xxxxx", "1234");
         assertNotNull(result);
         System.out.println(result);
     }
@@ -68,8 +69,19 @@ public class UserServiceTest {
 
     @Test
     public void queryByToken(){
-        UserVo userVo = userService.queryByToken("107B73E466230373B15C71B323AB8362BB558B0EF476FBEF685F63D25A694B6E");
-        assertNotNull(userVo);
-        System.out.println(userVo);
+        UserVoWithoutToken userVoWithoutToken = userService.queryByToken("107B73E466230373B15C71B323AB8362BB558B0EF476FBEF685F63D25A694B6E");
+        assertNotNull(userVoWithoutToken);
+        System.out.println(userVoWithoutToken);
+    }
+
+    @Test
+    public void updateById(){
+        User user = new User();
+        user.setId("18110578Y44MPWDP")
+                .setFaceImageBig("test_big")
+                .setFaceImage("test_smaill");
+
+        UserVoWithoutToken userVoWithoutToken = userService.updateById(user);
+        System.out.println(userVoWithoutToken);
     }
 }

@@ -1,6 +1,7 @@
 package org.peter.chat.service;
 
-import org.peter.chat.domain.vo.UserVo;
+import org.peter.chat.domain.vo.UserVoWithToken;
+import org.peter.chat.domain.vo.UserVoWithoutToken;
 import org.peter.chat.entity.User;
 
 public interface UserService {
@@ -15,14 +16,14 @@ public interface UserService {
     /**
      * 通过用户名和密码查询用户
      */
-    UserVo userLogin(String username, String password);
+    UserVoWithToken userLogin(String username, String password);
 
     /**
      * 用户注册
      *
      * @return
      */
-    UserVo userRegister(User user);
+    UserVoWithToken userRegister(User user);
 
     /**
      * 通过token查找用户
@@ -30,7 +31,7 @@ public interface UserService {
      * @param token
      * @return
      */
-    UserVo queryByToken(String token);
+    UserVoWithoutToken queryByToken(String token);
 
     /**
      * 通过用户名查找用户
@@ -38,12 +39,12 @@ public interface UserService {
      * @param userId
      * @return
      */
-    UserVo queryById(String userId);
+    UserVoWithoutToken queryById(String userId);
 
     /**
      *
      * @param user
      * @return
      */
-    UserVo updateById(UserVo user);
+    UserVoWithoutToken updateById(User user);
 }

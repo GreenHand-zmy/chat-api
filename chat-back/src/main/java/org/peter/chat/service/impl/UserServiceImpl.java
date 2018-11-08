@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.n3r.idworker.Sid;
 import org.peter.chat.config.properties.ChatProperties;
-import org.peter.chat.domain.vo.UserVo;
+import org.peter.chat.domain.vo.UserVoWithToken;
+import org.peter.chat.domain.vo.UserVoWithoutToken;
 import org.peter.chat.entity.User;
 import org.peter.chat.enums.ChatStatus;
 import org.peter.chat.exception.BusinessException;
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public UserVo userLogin(String username, String password) {
+    public UserVoWithToken userLogin(String username, String password) {
         // 使用md5(password + username)
         String passwordDigest = Md5Util.md5Str(password, username);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
@@ -57,16 +58,16 @@ public class UserServiceImpl implements UserService {
                     "username={}", username);
         }
 
-        UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(result, userVo);
+        UserVoWithToken userVoWithToken = new UserVoWithToken();
+        BeanUtils.copyProperties(result, userVoWithToken);
 
-        log.info("username={} 登陆成功", userVo.getUsername());
-        return userVo;
+        log.info("username={} 登陆成功", userVoWithToken.getUsername());
+        return userVoWithToken;
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public UserVo userRegister(User user) {
+    public UserVoWithToken userRegister(User user) {
         // 判断用户名是否已经存在,如果存在抛出异常
         boolean usernameIsExist = queryUsernameIsExist(user.getUsername());
         if (usernameIsExist) {
@@ -94,40 +95,45 @@ public class UserServiceImpl implements UserService {
         user.setGmtCreated(LocalDateTime.now());
         userMapper.insert(user);
 
-        UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(user, userVo);
+        UserVoWithToken userVoWithToken = new UserVoWithToken();
+        BeanUtils.copyProperties(user, userVoWithToken);
 
-        log.info("新用户username={} 注册成功", userVo.getUsername());
-        return userVo;
+        log.info("新用户username={} 注册成功", userVoWithToken.getUsername());
+        return userVoWithToken;
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public UserVo queryByToken(String token) {
+    public UserVoWithoutToken queryByToken(String token) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("token", token);
         User result = userMapper.selectOne(wrapper);
 
-        UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(result, userVo);
-        return userVo;
+        UserVoWithoutToken userVoWithoutToken = new UserVoWithoutToken();
+        BeanUtils.copyProperties(result, userVoWithoutToken);
+        return userVoWithoutToken;
     }
 
     @Override
-    public UserVo queryById(String userId) {
+    public UserVoWithoutToken queryById(String userId) {
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new BusinessException(ChatStatus.INVALID_USER_ID,
                     "userId={}", userId);
         }
 
-        UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(user, userVo);
-        return userVo;
+        UserVoWithoutToken userVoWithoutToken = new UserVoWithoutToken();
+        BeanUtils.copyProperties(user, userVoWithoutToken);
+        return userVoWithoutToken;
     }
 
     @Override
-    public UserVo updateById(UserVo user) {
-        return null;
+    @Transactional(propagation = Propagation.REQUIRED)
+    public UserVoWithoutToken updateById(User user) {
+        // 根据id更新用户
+        userMapper.updateById(user);
+
+        // 返回更新后的结果
+        return queryById(user.getId());
     }
 }

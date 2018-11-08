@@ -1,7 +1,7 @@
 package org.peter.chat.web.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.peter.chat.domain.vo.UserVo;
+import org.peter.chat.domain.vo.UserVoWithoutToken;
 import org.peter.chat.enums.ChatStatus;
 import org.peter.chat.enums.CustomHttpHeader;
 import org.peter.chat.exception.BusinessException;
@@ -45,14 +45,14 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         }
 
         // 根据userToken查询是否存在该用户
-        UserVo userVo = userService.queryByToken(userToken);
-        if (userVo == null) {
+        UserVoWithoutToken userVoWithoutToken = userService.queryByToken(userToken);
+        if (userVoWithoutToken == null) {
             throw new BusinessException(ChatStatus.AUTHENTICATION_EXCEPTION,
                     "remoteAddr={}, method={}, requestURI={}, userToken={}",
                     remoteAddr, method, requestURI, userToken);
         }
         // 将查询到的userVo放入请求上下文中
-        RequestContextHolder.set(userVo);
+        RequestContextHolder.set(userVoWithoutToken);
         return true;
     }
 
