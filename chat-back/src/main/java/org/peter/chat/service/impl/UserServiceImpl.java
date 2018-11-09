@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional(propagation = Propagation.REQUIRED)
     public UserVoWithToken userRegister(User user) {
         // 判断用户名是否已经存在,如果存在抛出异常
         boolean usernameIsExist = queryUsernameIsExist(user.getUsername());
@@ -115,6 +115,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public UserVoWithoutToken queryById(String userId) {
         User user = userMapper.selectById(userId);
         if (user == null) {

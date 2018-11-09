@@ -51,7 +51,8 @@ public class UserController {
 
     @ApiOperation("上传用户头像")
     @PutMapping("/{userId}/faceImage")
-    ResultBean<UserVoWithoutToken> uploadUserFaceImage(@PathVariable("userId") String userId, MultipartFile faceImage) throws IOException {
+    ResultBean<UserVoWithoutToken> uploadUserFaceImage(@PathVariable("userId") String userId,
+                                                       @RequestParam("faceImage") MultipartFile faceImage) throws IOException {
         /*
          * 将用户图片用fastDFS上传到远程服务器,这里可能会出现问题,非法用户可能会提交给不存在的编号
          * 调用此方法会在服务器上生成两份图片文件,一份大图一份缩略图,缩略的高宽配置在配置文件中
