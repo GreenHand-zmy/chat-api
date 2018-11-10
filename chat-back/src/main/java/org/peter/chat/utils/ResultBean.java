@@ -11,7 +11,7 @@ import org.peter.chat.enums.ResultStatus;
  */
 @Data
 @Accessors(chain = true)
-public class ResultBean<T> {
+public final class ResultBean<T> {
     // 数据
     private T data;
 

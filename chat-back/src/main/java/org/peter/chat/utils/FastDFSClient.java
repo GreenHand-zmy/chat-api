@@ -15,7 +15,7 @@ import com.github.tobato.fastdfs.exception.FdfsUnsupportStorePathException;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 
 @Component
-public class FastDFSClient {
+public final class FastDFSClient {
 
     @Autowired
     private FastFileStorageClient storageClient;

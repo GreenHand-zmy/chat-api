@@ -2,6 +2,8 @@ package org.peter.chat.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.peter.chat.domain.bo.UserBo;
+import org.peter.chat.domain.bo.UserResetPasswordBo;
 import org.peter.chat.domain.vo.UserVoWithToken;
 import org.peter.chat.domain.vo.UserVoWithoutToken;
 import org.peter.chat.entity.User;
@@ -68,6 +70,30 @@ public class UserController {
         // 通过用户编号更新用户
         UserVoWithoutToken userVoWithoutToken = userService.updateById(user);
         return new ResultBean<UserVoWithoutToken>().success(userVoWithoutToken);
+    }
+
+    @ApiOperation("修改用户常规信息")
+    @PutMapping("/{userId}")
+    ResultBean<UserVoWithoutToken> updateUser(@PathVariable("userId") String userId,
+                                              UserBo UserBo) {
+        User user = new User();
+        user.setId(userId)
+                .setNickname(UserBo.getNickname());
+
+        // 通过用户编号更新用户
+        UserVoWithoutToken userVoWithoutToken = userService.updateById(user);
+        return new ResultBean<UserVoWithoutToken>().success(userVoWithoutToken);
+    }
+
+    @ApiOperation("重置用户密码")
+    @PostMapping("/resetPassword")
+    ResultBean<UserVoWithToken> resetPassword(@Valid UserResetPasswordBo userResetPasswordBo) {
+        // 通过用户编号更新用户
+        UserVoWithToken userVoWithToken = userService.resetPassword(userResetPasswordBo.getUsername(),
+                userResetPasswordBo.getOldPassword(),
+                userResetPasswordBo.getNewPassword());
+
+        return new ResultBean<UserVoWithToken>().success(userVoWithToken);
     }
 
     private String getThumbImgServerPath(String bigImgServerPath) {

@@ -15,4 +15,9 @@ public class BusinessException extends RuntimeException {
         code = status.getCode();
         snapshot = MessageFormatter.format(snapshotFormat, argArray).getMessage();
     }
+
+    public BusinessException(ChatStatus status) {
+        super(status.getMessage());
+        code = status.getCode();
+    }
 }

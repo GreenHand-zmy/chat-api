@@ -5,7 +5,7 @@ import org.apache.commons.codec.binary.Base64;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Md5Util {
+public final class Md5Util {
     private static final String DEFAULT_SLAT = "F4ABp52p2iNnyPByW0cOnfgB240NyQ3i";
 
     public static String md5Str(String value) {

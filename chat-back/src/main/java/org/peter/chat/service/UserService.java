@@ -42,9 +42,20 @@ public interface UserService {
     UserVoWithoutToken queryById(String userId);
 
     /**
+     * 通过用户编号修改用户信息
      *
      * @param user
      * @return
      */
     UserVoWithoutToken updateById(User user);
+
+    /**
+     * 通过用户名和旧密码重置新密码
+     *
+     * @param username
+     * @param oldPassword
+     * @param newPassword
+     * @return
+     */
+    UserVoWithToken resetPassword(String username, String oldPassword, String newPassword);
 }

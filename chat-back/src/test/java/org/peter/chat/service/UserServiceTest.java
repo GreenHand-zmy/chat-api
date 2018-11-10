@@ -68,14 +68,14 @@ public class UserServiceTest {
     }
 
     @Test
-    public void queryByToken(){
+    public void queryByToken() {
         UserVoWithoutToken userVoWithoutToken = userService.queryByToken("107B73E466230373B15C71B323AB8362BB558B0EF476FBEF685F63D25A694B6E");
         assertNotNull(userVoWithoutToken);
         System.out.println(userVoWithoutToken);
     }
 
     @Test
-    public void updateById(){
+    public void updateById() {
         User user = new User();
         user.setId("18110578Y44MPWDP")
                 .setFaceImageBig("test_big")
@@ -83,5 +83,16 @@ public class UserServiceTest {
 
         UserVoWithoutToken userVoWithoutToken = userService.updateById(user);
         System.out.println(userVoWithoutToken);
+    }
+
+    @Test
+    public void resetPassword() {
+        User user = new User();
+        user.setUsername("admin")
+                .setPassword("123");
+        String newPassword = "123456";
+        UserVoWithToken userVoWithToken = userService.resetPassword(user.getUsername(), user.getPassword(), newPassword);
+
+        System.out.println(userVoWithToken);
     }
 }

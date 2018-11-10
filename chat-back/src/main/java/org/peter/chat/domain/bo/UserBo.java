@@ -10,7 +10,7 @@ public class UserBo {
     private String id;
 
     /**
-     * 用户头像
+     * 昵称
      */
-    private String faceData;
+    private String nickname;
 }
