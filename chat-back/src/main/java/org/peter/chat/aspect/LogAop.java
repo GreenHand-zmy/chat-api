@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class LogAop {
-    @Pointcut("execution(* org.peter.chat.service.impl.*.*(..))")
+    @Pointcut("execution(* org.peter.chat.service.app.impl.*.*(..))")
     private void service() {
     }
 

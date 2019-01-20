@@ -2,20 +2,31 @@ package org.peter.chat.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.peter.chat.domain.bo.UserBo;
-import org.peter.chat.domain.bo.UserResetPasswordBo;
-import org.peter.chat.domain.vo.UserVoWithToken;
-import org.peter.chat.domain.vo.UserVoWithoutToken;
-import org.peter.chat.entity.User;
-import org.peter.chat.service.UserService;
+import org.peter.chat.domain.bo.FriendRequestBO;
+import org.peter.chat.domain.bo.UserBO;
+import org.peter.chat.domain.bo.UserResetPasswordBO;
+import org.peter.chat.domain.bo.UserShowInformationBO;
+import org.peter.chat.domain.bo.enums.FriendRequestType;
+import org.peter.chat.domain.bo.query.UserSearchQuery;
+import org.peter.chat.domain.vo.UserWithTokenVO;
+import org.peter.chat.domain.vo.common.FriendRequestVO;
+import org.peter.chat.domain.vo.common.UserCommonVO;
+import org.peter.chat.entity.UserEntity;
+import org.peter.chat.enums.exceptionStatus.ChatExceptionStatus;
+import org.peter.chat.exception.BusinessException;
+import org.peter.chat.service.app.UserService;
 import org.peter.chat.utils.FastDFSClient;
 import org.peter.chat.utils.ResultBean;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
+
+import static org.peter.chat.controller.SessionController.getCurrentUserSession;
 
 @RestController
 @RequestMapping("/user")
@@ -28,72 +39,145 @@ public class UserController {
 
     @ApiOperation(value = "用户登录或注册")
     @PostMapping("/registerOrLogin")
-    ResultBean<UserVoWithToken> registerOrLogin(@Valid User user) {
+    ResultBean<UserWithTokenVO> registerOrLogin(@Valid UserBO user) {
         // 查询用户名是否已经存在
         boolean usernameIsExist = userService
                 .queryUsernameIsExist(user.getUsername());
 
-        UserVoWithToken userResult;
+        UserWithTokenVO userResult;
         if (usernameIsExist) {
             // 用户名存在,进行登录逻辑
             userResult = userService.userLogin(user.getUsername(), user.getPassword());
         } else {
+            UserEntity record = new UserEntity();
+            BeanUtils.copyProperties(user, record);
+
             // 进行注册逻辑
-            userResult = userService.userRegister(user);
+            userResult = userService.userRegister(record);
         }
-        return new ResultBean<UserVoWithToken>().success(userResult);
+        return new ResultBean<UserWithTokenVO>().success(userResult);
     }
 
     @ApiOperation("通过用户编号获取用户信息")
     @GetMapping("/{userId}")
-    ResultBean<UserVoWithoutToken> getUserInfoById(@PathVariable("userId") String userId) {
-        UserVoWithoutToken userVoWithoutToken = userService.queryById(userId);
-        return new ResultBean<UserVoWithoutToken>().success(userVoWithoutToken);
+    ResultBean<UserCommonVO> getUserInfoById(@PathVariable("userId") String userId) {
+        UserCommonVO userCommonVO = userService.queryById(userId);
+        return new ResultBean<UserCommonVO>().success(userCommonVO);
+    }
+
+
+    @ApiOperation("修改用户常规信息")
+    @PutMapping("/information/update")
+    ResultBean<UserCommonVO> updateUser(UserShowInformationBO userShowInformationBO) {
+        // 获取当前登录的用户
+        UserCommonVO currentUserSession = getCurrentUserSession();
+
+        UserEntity user = new UserEntity();
+        BeanUtils.copyProperties(userShowInformationBO, user);
+        user.setId(currentUserSession.getId());
+
+        // 通过用户编号更新用户
+        UserCommonVO userCommonVO = userService.updateById(user);
+        return new ResultBean<UserCommonVO>().success(userCommonVO);
+    }
+
+
+    @ApiOperation("查找用户信息")
+    @GetMapping("/search")
+    ResultBean<UserCommonVO> getUserInfoByUsername(UserSearchQuery searchQuery) {
+        // 通过参数查找用户信息
+        UserCommonVO userCommonVO = userService.queryByParams(searchQuery);
+        return new ResultBean<UserCommonVO>().success(userCommonVO);
+    }
+
+    @ApiOperation("查询是否为好友关系")
+    @GetMapping("/isFriendRelation")
+    ResultBean<Boolean> isFriendRelation(String otherUserId) {
+        // 获取当前登录的用户
+        UserCommonVO currentUserSession = getCurrentUserSession();
+
+        Boolean relation = userService.isHavingRelation(currentUserSession.getId(), otherUserId);
+        return new ResultBean<Boolean>().success(relation);
     }
 
     @ApiOperation("上传用户头像")
-    @PutMapping("/{userId}/faceImage")
-    ResultBean<UserVoWithoutToken> uploadUserFaceImage(@PathVariable("userId") String userId,
-                                                       @RequestParam("faceImage") MultipartFile faceImage) throws IOException {
+    @PutMapping("/faceImage")
+    ResultBean<UserCommonVO> uploadUserFaceImage(@RequestParam("faceImage") MultipartFile faceImage) throws IOException {
+        // 获取当前登录的用户
+        UserCommonVO currentUserSession = getCurrentUserSession();
+
         /*
-         * 将用户图片用fastDFS上传到远程服务器,这里可能会出现问题,非法用户可能会提交给不存在的编号
+         * 将用户图片用fastDFS上传到远程服务器
          * 调用此方法会在服务器上生成两份图片文件,一份大图一份缩略图,缩略的高宽配置在配置文件中
          */
         String bigImgServerPath = fastDFSClient.uploadFileAndCrtThumbImage(faceImage);
         String thumbImgServerPath = getThumbImgServerPath(bigImgServerPath);
 
-        User user = new User();
-        user.setId(userId)
+        UserEntity user = new UserEntity();
+        user.setId(currentUserSession.getId())
                 .setFaceImage(thumbImgServerPath)
                 .setFaceImageBig(bigImgServerPath);
 
         // 通过用户编号更新用户
-        UserVoWithoutToken userVoWithoutToken = userService.updateById(user);
-        return new ResultBean<UserVoWithoutToken>().success(userVoWithoutToken);
-    }
-
-    @ApiOperation("修改用户常规信息")
-    @PutMapping("/{userId}")
-    ResultBean<UserVoWithoutToken> updateUser(@PathVariable("userId") String userId,
-                                              UserBo UserBo) {
-        User user = new User();
-        user.setId(userId)
-                .setNickname(UserBo.getNickname());
-
-        // 通过用户编号更新用户
-        UserVoWithoutToken userVoWithoutToken = userService.updateById(user);
-        return new ResultBean<UserVoWithoutToken>().success(userVoWithoutToken);
+        UserCommonVO userCommonVO = userService.updateById(user);
+        return new ResultBean<UserCommonVO>().success(userCommonVO);
     }
 
     @ApiOperation("重置用户密码")
     @PostMapping("/resetPassword")
-    ResultBean<UserVoWithToken> resetPassword(@Valid UserResetPasswordBo userResetPasswordBo) {
-        // 通过用户编号更新用户
-        UserVoWithToken userVoWithToken = userService.resetPassword(userResetPasswordBo.getUsername(),
-                userResetPasswordBo.getOldPassword(),
-                userResetPasswordBo.getNewPassword());
+    ResultBean<UserWithTokenVO> resetPassword(@Valid UserResetPasswordBO userResetPasswordBO) {
+        UserWithTokenVO userWithTokenVO = userService.resetPassword(userResetPasswordBO.getUsername(),
+                userResetPasswordBO.getOldPassword(),
+                userResetPasswordBO.getNewPassword());
 
-        return new ResultBean<UserVoWithToken>().success(userVoWithToken);
+        return new ResultBean<UserWithTokenVO>().success(userWithTokenVO);
+    }
+
+    @ApiOperation("发送添加好友请求")
+    @PostMapping("/friendRequest")
+    ResultBean addFriend(@RequestParam("acceptUserId") String acceptUserId) {
+        UserCommonVO currentUserSession = getCurrentUserSession();
+
+        userService.sendFriendRequest(currentUserSession.getId(), acceptUserId);
+        return new ResultBean().success();
+    }
+
+
+    @ApiOperation("用户查询好友请求")
+    @GetMapping("/friendRequest")
+    ResultBean<List<FriendRequestVO>> getFriendRequest() {
+        UserCommonVO currentUserSession = getCurrentUserSession();
+
+        List<FriendRequestVO> friendRequestVOList = userService.queryFriendRequestList(currentUserSession.getId());
+        return new ResultBean<List<FriendRequestVO>>().success(friendRequestVOList);
+    }
+
+    @ApiOperation("用户处理好友请求")
+    @PostMapping("/opt/friendRequest")
+    ResultBean optFriendRequest(@Valid FriendRequestBO friendRequest) {
+        String userId = getCurrentUserSession().getId();
+
+        if (FriendRequestType.ACCEPT.equals(friendRequest.getStatus())) {
+            // 通过好友请求
+            userService.acceptFriendRequest(userId, friendRequest);
+        } else if (FriendRequestType.REJECT.equals(friendRequest.getStatus())) {
+            // 拒绝好友请求
+            userService.rejectFriendRequest(userId, friendRequest);
+        } else {
+            // 不处理其他未知好友请求类型
+            throw new BusinessException(ChatExceptionStatus.APP_RUNTIME_EXCEPTION);
+        }
+
+        return new ResultBean().success();
+    }
+
+    @ApiOperation("用户查询好友列表")
+    @GetMapping("/friendList")
+    ResultBean<List<UserCommonVO>> getFriendList() {
+        UserCommonVO currentUserSession = getCurrentUserSession();
+
+        List<UserCommonVO> friendList = userService.queryFriendListByMyUserId(currentUserSession.getId());
+        return new ResultBean<List<UserCommonVO>>().success(friendList);
     }
 
     private String getThumbImgServerPath(String bigImgServerPath) {

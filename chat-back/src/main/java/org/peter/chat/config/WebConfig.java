@@ -3,10 +3,12 @@ package org.peter.chat.config;
 import lombok.extern.slf4j.Slf4j;
 import org.peter.chat.config.properties.ChatProperties;
 import org.peter.chat.config.properties.LoginInterceptorProperties;
+import org.peter.chat.web.converter.UniversalEnumConverterFactory;
 import org.peter.chat.web.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -31,5 +33,10 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns(properties.getInclude())
                 .excludePathPatterns(properties.getExclude());
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverterFactory(new UniversalEnumConverterFactory());
     }
 }

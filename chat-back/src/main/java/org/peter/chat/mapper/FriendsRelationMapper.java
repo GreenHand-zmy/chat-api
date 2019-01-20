@@ -1,6 +1,6 @@
 package org.peter.chat.mapper;
 
-import org.peter.chat.entity.FriendsRelation;
+import org.peter.chat.entity.FriendsRelationEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author zmy
  * @since 2018-10-14
  */
-public interface FriendsRelationMapper extends BaseMapper<FriendsRelation> {
+public interface FriendsRelationMapper extends BaseMapper<FriendsRelationEntity> {
 
 }

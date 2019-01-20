@@ -1,6 +1,6 @@
 package org.peter.chat;
 
-import org.peter.chat.websocket.WSServer;
+import org.peter.chat.netty.WSServer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;

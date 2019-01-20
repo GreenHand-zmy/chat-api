@@ -28,7 +28,6 @@ public class QRCodeUtils {
         int width = 300;            //图片的宽度
         int height = 300;            //图片的高度
         String format = "png";        //图片的格式
-//        String content="风间影月";     //内容
 
         /*
          * 定义二维码的参数
@@ -36,13 +35,15 @@ public class QRCodeUtils {
         HashMap hints = new HashMap();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");    //指定字符编码为“utf-8”
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);  //指定二维码的纠错等级为中级
-        hints.put(EncodeHintType.MARGIN, 2);    //设置图片的边距
+        hints.put(EncodeHintType.MARGIN, 1);    //设置图片的边距
 
         /*
          * 生成二维码
          */
         try {
             BitMatrix bitMatrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, width, height, hints);
+            // 去除白边
+            bitMatrix = deleteWhite(bitMatrix);
             Path file = new File(filePath).toPath();
             MatrixToImageWriter.writeToPath(bitMatrix, format, file);
         } catch (Exception e) {
@@ -66,5 +67,21 @@ public class QRCodeUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static BitMatrix deleteWhite(BitMatrix matrix) {
+        int[] rec = matrix.getEnclosingRectangle();
+        int resWidth = rec[2] + 1;
+        int resHeight = rec[3] + 1;
+
+        BitMatrix resMatrix = new BitMatrix(resWidth, resHeight);
+        resMatrix.clear();
+        for (int i = 0; i < resWidth; i++) {
+            for (int j = 0; j < resHeight; j++) {
+                if (matrix.get(i + rec[0], j + rec[1]))
+                    resMatrix.set(i, j);
+            }
+        }
+        return resMatrix;
     }
 }

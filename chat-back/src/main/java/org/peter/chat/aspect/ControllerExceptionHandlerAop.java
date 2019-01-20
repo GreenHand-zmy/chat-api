@@ -2,13 +2,11 @@ package org.peter.chat.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.peter.chat.enums.ChatStatus;
+import org.peter.chat.enums.exceptionStatus.ChatExceptionStatus;
 import org.peter.chat.exception.BusinessException;
 import org.peter.chat.utils.ResultBean;
 import org.peter.chat.web.ControllerExceptionHandler;
-import org.springframework.stereotype.Component;
 
 /**
  * 控制器异常处理器
@@ -54,7 +52,7 @@ public class ControllerExceptionHandlerAop {
         } else {
             // 发生其他异常,不返回具体报错信息给前端,后台会打印日志
             resultBean = new ResultBean<>()
-                    .failed(ChatStatus.APP_RUNTIME_EXCEPTION.getMessage());
+                    .failed(ChatExceptionStatus.APP_RUNTIME_EXCEPTION.getMessage());
         }
         return resultBean;
     }

@@ -16,21 +16,22 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/chat?useSSL=false
+    url: jdbc:mysql://localhost/chat?useSSL=false
     driver-class-name: com.mysql.jdbc.Driver
     username: root
-    password: 123456
+    password: '123456'
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: org.peter.chat.entity
+  config-location: classpath:mybatis-config.xml
 chat:
   webSocket:
     port: 8090
     websocketPath: /ws
   login-interceptor:
     include:
-      #- /**
-      - /error
+      - /**
+#      - /error
     exclude:
       - /user/registerOrLogin
       - /swagger-ui.html
