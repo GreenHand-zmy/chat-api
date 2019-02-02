@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  * 处理消息的handler
  * TextWebSocketFrame：在netty中,是用于为websocket专门处理文本的对象,frame是消息的载体
  */
+@Deprecated
 public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     //  用于记录和管理所有客户端的channel
     private static ChannelGroup clients =

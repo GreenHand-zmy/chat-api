@@ -8,8 +8,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.peter.chat.netty.channelHandler.ChatHandler;
-import org.peter.chat.netty.channelHandler.HeartBeatHandler;
+import org.peter.chat.netty.channelHandler.*;
 import org.springframework.beans.factory.annotation.Value;
 
 public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
@@ -45,7 +44,10 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new HeartBeatHandler());
 
         // 自定义handler,处理客户端的请求
-        pipeline.addLast(new ChatHandler());
-
+//        pipeline.addLast(new ChatHandler());
+        pipeline.addLast(new PacketDecoderHandler())
+                .addLast(new ConnectHandler())
+                .addLast(new NormalMsgHandler())
+                .addLast(new SignMsgHandler());
     }
 }
