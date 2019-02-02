@@ -41,13 +41,13 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
 
         // 添加心跳支持
         pipeline.addLast(new IdleStateHandler(2, 4, 6));
-        pipeline.addLast(new HeartBeatHandler());
+        pipeline.addLast(HeartBeatHandler.instance());
 
         // 自定义handler,处理客户端的请求
 //        pipeline.addLast(new ChatHandler());
-        pipeline.addLast(new PacketDecoderHandler())
-                .addLast(new ConnectHandler())
-                .addLast(new NormalMsgHandler())
-                .addLast(new SignMsgHandler());
+        pipeline.addLast(PacketDecoderHandler.instance())
+                .addLast(ConnectHandler.instance())
+                .addLast(NormalMsgHandler.instance())
+                .addLast(SignMsgHandler.instance());
     }
 }

@@ -2,6 +2,7 @@ package org.peter.chat.netty.channelHandler;
 
 import com.alibaba.fastjson.JSON;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -12,13 +13,19 @@ import org.peter.chat.service.ServiceThreadPool;
 import org.peter.chat.service.app.ChatHistoryService;
 import org.peter.chat.utils.SpringUtil;
 
+@ChannelHandler.Sharable
 public class NormalMsgHandler extends SimpleChannelInboundHandler<MsgPacket> {
     private final static ChatHistoryService CHAT_HISTORY_SERVICE;
     private final static ServiceThreadPool THREAD_POOL;
 
+    private static final NormalMsgHandler INSTANCE = new NormalMsgHandler();
+
     static {
         CHAT_HISTORY_SERVICE = SpringUtil.getBean(ChatHistoryService.class);
         THREAD_POOL = SpringUtil.getBean(ServiceThreadPool.class);
+    }
+
+    private NormalMsgHandler() {
     }
 
     @Override
@@ -45,5 +52,9 @@ public class NormalMsgHandler extends SimpleChannelInboundHandler<MsgPacket> {
             // 将消息转发出去
             receiverChannel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(msgPacket)));
         }
+    }
+
+    public static NormalMsgHandler instance() {
+        return INSTANCE;
     }
 }

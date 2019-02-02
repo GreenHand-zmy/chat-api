@@ -1,6 +1,7 @@
 package org.peter.chat.netty.channelHandler;
 
 import com.alibaba.fastjson.JSON;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -10,7 +11,13 @@ import org.peter.chat.netty.protocol.*;
 /**
  * 解码传递过来的json格式的指令
  */
+@ChannelHandler.Sharable
 public class PacketDecoderHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+    private static PacketDecoderHandler INSTANCE = new PacketDecoderHandler();
+
+    private PacketDecoderHandler() {
+    }
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         String content = msg.text();
@@ -36,5 +43,9 @@ public class PacketDecoderHandler extends SimpleChannelInboundHandler<TextWebSoc
             HeartBeatPacket heartBeatPacket = JSON.parseObject(content, HeartBeatPacket.class);
             ctx.pipeline().fireChannelRead(heartBeatPacket);
         }
+    }
+
+    public static PacketDecoderHandler instance() {
+        return INSTANCE;
     }
 }

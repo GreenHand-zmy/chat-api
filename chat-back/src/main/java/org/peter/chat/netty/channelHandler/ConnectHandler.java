@@ -1,6 +1,7 @@
 package org.peter.chat.netty.channelHandler;
 
 import com.alibaba.fastjson.JSON;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -16,13 +17,20 @@ import org.peter.chat.utils.SpringUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@ChannelHandler.Sharable
 public class ConnectHandler extends SimpleChannelInboundHandler<ConnectPacket> {
     private final static ChatHistoryService chatHistoryService;
     private final static ServiceThreadPool THREAD_POOL;
 
+    // 构造单例
+    private static final ConnectHandler INSTANCE = new ConnectHandler();
+
     static {
         chatHistoryService = SpringUtil.getBean(ChatHistoryService.class);
         THREAD_POOL = SpringUtil.getBean(ServiceThreadPool.class);
+    }
+
+    private ConnectHandler() {
     }
 
     @Override
@@ -46,5 +54,9 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectPacket> {
                 ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(msgListPacket)));
             }
         });
+    }
+
+    public static ConnectHandler instance() {
+        return INSTANCE;
     }
 }
