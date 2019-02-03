@@ -56,6 +56,12 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectPacket> {
         });
     }
 
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        SessionHolder.removeChannel(ctx.channel());
+        System.out.println("客户端断开,channel对应的长id为:" + ctx.channel().id().asLongText());
+    }
+
     public static ConnectHandler instance() {
         return INSTANCE;
     }

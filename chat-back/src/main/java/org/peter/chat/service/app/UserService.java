@@ -129,4 +129,12 @@ public interface UserService {
      * @param friendRequest
      */
     void rejectFriendRequest(String myUserId, FriendRequestBO friendRequest);
+
+    /**
+     * 删除好友
+     *
+     * @param meId
+     * @param friendId
+     */
+    void removeFriend(String meId, String friendId);
 }

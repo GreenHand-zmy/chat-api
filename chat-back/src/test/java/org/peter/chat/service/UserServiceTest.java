@@ -57,7 +57,7 @@ public class UserServiceTest {
     @Test
     public void registerUserSuccess() {
         UserEntity user = new UserEntity();
-        user.setUsername("admin")
+        user.setUsername("admin1234567")
                 .setPassword("123")
                 .setNickname("zmy");
 
@@ -142,4 +142,9 @@ public class UserServiceTest {
         }
     }
 
+    @Test
+    public void removeFriend() {
+        String meId = "181116GNPNZ0RZ54";
+        userService.removeFriend(meId,"190203BXPZMANGXP");
+    }
 }

@@ -1,5 +1,6 @@
 package org.peter.chat.netty;
 
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -40,7 +41,7 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new WebSocketServerProtocolHandler(websocketPath));
 
         // 添加心跳支持
-        pipeline.addLast(new IdleStateHandler(2, 4, 6));
+        pipeline.addLast(new IdleStateHandler(2, 4, 60));
         pipeline.addLast(HeartBeatHandler.instance());
 
         // 自定义handler,处理客户端的请求
@@ -49,5 +50,7 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
                 .addLast(ConnectHandler.instance())
                 .addLast(NormalMsgHandler.instance())
                 .addLast(SignMsgHandler.instance());
+
+
     }
 }

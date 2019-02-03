@@ -21,6 +21,7 @@ import org.peter.chat.exception.BusinessException;
 import org.peter.chat.mapper.FriendsRelationMapper;
 import org.peter.chat.mapper.FriendsRequestMapper;
 import org.peter.chat.mapper.UserMapper;
+import org.peter.chat.service.ServiceThreadPool;
 import org.peter.chat.service.app.QRCodeService;
 import org.peter.chat.service.app.UserService;
 import org.peter.chat.utils.Md5Util;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -55,6 +57,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private QRCodeService qrCodeService;
+    @Autowired
+    private ServiceThreadPool serviceThreadPool;
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -112,17 +116,26 @@ public class UserServiceImpl implements UserService {
         user.setNickname(chatProperties.getRandomNickname()); //后期从配置文件中获取
         user.setFaceImage("");
         user.setFaceImageBig("");
-
-        // 设置QRcode todo 为保证注册服务可用性,生成二维码这里可以提交给其他线程去做,防止上传超时,导致注册不了
-        QrCodeContent qrCodeContent = new QrCodeContent();
-        qrCodeContent.setUserId(user.getId());
-        String qrContent = JSON.toJSONString(qrCodeContent);
-        String qrFilename = user.getId() + "qrcode.png";
-        String serverQrcodeFilePath = qrCodeService.generateQrCodeAndUpload(qrFilename, qrContent);
-        user.setQrcode(serverQrcodeFilePath);
+        user.setQrcode("");
 
         user.setGmtCreated(LocalDateTime.now());
         userMapper.insert(user);
+
+        // 异步设置QRcode 为保证注册服务可用性,生成二维码这里可以提交给其他线程去做,防止上传超时抛出异常,导致数据库回滚注册不了
+        serviceThreadPool.submit(() -> {
+            QrCodeContent qrCodeContent = new QrCodeContent();
+            qrCodeContent.setUserId(user.getId());
+            String qrContent = JSON.toJSONString(qrCodeContent);
+            String qrFilename = user.getId() + "qrcode.png";
+            String serverQrcodeFilePath = qrCodeService.generateQrCodeAndUpload(qrFilename, qrContent);
+
+            UserEntity userUpdater = new UserEntity();
+            userUpdater.setId(user.getId())
+                    .setQrcode(serverQrcodeFilePath);
+
+            userMapper.updateById(userUpdater);
+            log.info("新用户设置二维码成功");
+        });
 
         UserWithTokenVO userWithTokenVO = new UserWithTokenVO();
         BeanUtils.copyProperties(user, userWithTokenVO);
@@ -185,7 +198,7 @@ public class UserServiceImpl implements UserService {
         if (!StringUtils.isEmpty(searchQuery.getUserId())) {
             wrapper.eq("id", searchQuery.getUserId());
         }
-        if (!StringUtils.isEmpty(searchQuery.getUsername())){
+        if (!StringUtils.isEmpty(searchQuery.getUsername())) {
             wrapper.eq("username", searchQuery.getUsername());
         }
 
@@ -334,20 +347,7 @@ public class UserServiceImpl implements UserService {
 
         // 处理请求,同意后双方产生关联
         String acceptUserId = friendsRequest.getAcceptUserId();
-        FriendsRelationEntity myRelation = new FriendsRelationEntity();
-        myRelation.setId(sid.nextShort())
-                .setMeUserId(acceptUserId)
-                .setFriendUserId(sendUserId)
-                .setGmtCreated(LocalDateTime.now());
-
-        FriendsRelationEntity otherRelation = new FriendsRelationEntity();
-        otherRelation.setId(sid.nextShort())
-                .setMeUserId(sendUserId)
-                .setFriendUserId(acceptUserId)
-                .setGmtCreated(LocalDateTime.now());
-
-        friendsRelationMapper.insert(myRelation);
-        friendsRelationMapper.insert(otherRelation);
+        combineTwoUser(sendUserId, acceptUserId);
     }
 
     @Override
@@ -363,6 +363,25 @@ public class UserServiceImpl implements UserService {
         friendsRequestMapper.updateById(friendsRequest);
 
         // todo 后期应该要将拒绝信息推送给请求方
+    }
+
+    @Override
+    public void removeFriend(String meId, String friendId) {
+        // todo 查询是否为好友关系,如果不是则抛出异常
+        QueryWrapper<FriendsRelationEntity> wrapper1 = new QueryWrapper<>();
+        wrapper1.eq("me_user_id", meId)
+                .eq("friend_user_id", friendId);
+        FriendsRelationEntity relationOne = friendsRelationMapper.selectOne(wrapper1);
+
+        QueryWrapper<FriendsRelationEntity> wrapper2 = new QueryWrapper<>();
+        wrapper2.eq("me_user_id", friendId)
+                .eq("friend_user_id", meId);
+        FriendsRelationEntity relationTwo = friendsRelationMapper.selectOne(wrapper2);
+
+        List<String> ids = new ArrayList<>();
+        ids.add(relationOne.getId());
+        ids.add(relationTwo.getId());
+        friendsRelationMapper.deleteBatchIds(ids);
     }
 
     /**
@@ -395,6 +414,27 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(FriendRequestExceptionStatus.SOLVED_USER_REQUEST,
                     "requestId={}", requestBO.getRequestId());
         }
+    }
+
+    /**
+     * 使两位用户产生好友联系
+     */
+    private void combineTwoUser(String userOneId, String userTwoId) {
+        // 处理请求,同意后双方产生关联
+        FriendsRelationEntity myRelation = new FriendsRelationEntity();
+        myRelation.setId(sid.nextShort())
+                .setMeUserId(userOneId)
+                .setFriendUserId(userTwoId)
+                .setGmtCreated(LocalDateTime.now());
+
+        FriendsRelationEntity otherRelation = new FriendsRelationEntity();
+        otherRelation.setId(sid.nextShort())
+                .setMeUserId(userTwoId)
+                .setFriendUserId(userOneId)
+                .setGmtCreated(LocalDateTime.now());
+
+        friendsRelationMapper.insert(myRelation);
+        friendsRelationMapper.insert(otherRelation);
     }
 
     private String getEncryptionPassword(String plainPassword) {
