@@ -1,7 +1,10 @@
 package org.peter.chat.service.app;
 
-import org.peter.chat.domain.vo.UnReadMsgVO;
+import org.peter.chat.domain.qo.common.PageQO;
+import org.peter.chat.domain.vo.ChatHistoryVO;
+import org.peter.chat.domain.vo.common.PageVO;
 import org.peter.chat.entity.ChatHistoryEntity;
+import org.peter.chat.mapper.qo.ChatHistoryMapperQO;
 
 import java.util.List;
 
@@ -35,4 +38,12 @@ public interface ChatHistoryService {
      * @return
      */
     Integer countUnReadMsg(String userId);
+
+    /**
+     * 分页查询好友聊天记录
+     *
+     * @param pageQO
+     * @return
+     */
+    PageVO<ChatHistoryVO> queryChatHistory(PageQO<ChatHistoryMapperQO> pageQO);
 }

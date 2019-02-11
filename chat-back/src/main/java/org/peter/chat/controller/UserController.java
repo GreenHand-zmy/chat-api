@@ -7,13 +7,19 @@ import org.peter.chat.domain.bo.UserBO;
 import org.peter.chat.domain.bo.UserResetPasswordBO;
 import org.peter.chat.domain.bo.UserShowInformationBO;
 import org.peter.chat.domain.bo.enums.FriendRequestType;
-import org.peter.chat.domain.bo.query.UserSearchQuery;
+import org.peter.chat.domain.qo.HistorySearchQO;
+import org.peter.chat.domain.qo.UserSearchQO;
+import org.peter.chat.domain.qo.common.PageQO;
+import org.peter.chat.domain.vo.ChatHistoryVO;
 import org.peter.chat.domain.vo.UserWithTokenVO;
-import org.peter.chat.domain.vo.common.FriendRequestVO;
+import org.peter.chat.domain.vo.FriendRequestVO;
+import org.peter.chat.domain.vo.common.PageVO;
 import org.peter.chat.domain.vo.common.UserCommonVO;
 import org.peter.chat.entity.UserEntity;
 import org.peter.chat.enums.exceptionStatus.ChatExceptionStatus;
 import org.peter.chat.exception.BusinessException;
+import org.peter.chat.mapper.qo.ChatHistoryMapperQO;
+import org.peter.chat.service.app.ChatHistoryService;
 import org.peter.chat.service.app.UserService;
 import org.peter.chat.utils.FastDFSClient;
 import org.peter.chat.utils.ResultBean;
@@ -36,6 +42,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private FastDFSClient fastDFSClient;
+    @Autowired
+    private ChatHistoryService chatHistoryService;
 
     @ApiOperation(value = "用户登录或注册")
     @PostMapping("/registerOrLogin")
@@ -84,7 +92,7 @@ public class UserController {
 
     @ApiOperation("查找用户信息")
     @GetMapping("/search")
-    ResultBean<UserCommonVO> getUserInfoByUsername(UserSearchQuery searchQuery) {
+    ResultBean<UserCommonVO> getUserInfoByUsername(UserSearchQO searchQuery) {
         // 通过参数查找用户信息
         UserCommonVO userCommonVO = userService.queryByParams(searchQuery);
         return new ResultBean<UserCommonVO>().success(userCommonVO);
@@ -178,6 +186,25 @@ public class UserController {
 
         List<UserCommonVO> friendList = userService.queryFriendListByMyUserId(currentUserSession.getId());
         return new ResultBean<List<UserCommonVO>>().success(friendList);
+    }
+
+
+    @ApiOperation("用户查询聊天记录")
+    @PostMapping("/history")
+    ResultBean<PageVO<ChatHistoryVO>> getHistory(@RequestBody PageQO<HistorySearchQO> pageQO) {
+        UserCommonVO currentUserSession = getCurrentUserSession();
+
+        HistorySearchQO condition = pageQO.getCondition();
+        ChatHistoryMapperQO extra = new ChatHistoryMapperQO();
+        extra.setOneUserId(currentUserSession.getId())
+                .setOtherUserId(condition.getFriendUserId());
+
+        PageQO<ChatHistoryMapperQO> mapperPageQO = new PageQO<>();
+        BeanUtils.copyProperties(pageQO, mapperPageQO);
+        mapperPageQO.setCondition(extra);
+
+        PageVO<ChatHistoryVO> result = chatHistoryService.queryChatHistory(mapperPageQO);
+        return new ResultBean<PageVO<ChatHistoryVO>>().success(result);
     }
 
     private String getThumbImgServerPath(String bigImgServerPath) {

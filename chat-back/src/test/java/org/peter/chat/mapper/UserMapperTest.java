@@ -2,7 +2,7 @@ package org.peter.chat.mapper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.peter.chat.domain.vo.common.FriendRequestVO;
+import org.peter.chat.domain.vo.FriendRequestVO;
 import org.peter.chat.domain.vo.common.UserCommonVO;
 import org.peter.chat.entity.UserEntity;
 import org.peter.chat.enums.FriendRequestStatus;

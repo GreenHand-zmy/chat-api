@@ -1,9 +1,9 @@
 package org.peter.chat.service.app;
 
 import org.peter.chat.domain.bo.FriendRequestBO;
-import org.peter.chat.domain.bo.query.UserSearchQuery;
+import org.peter.chat.domain.qo.UserSearchQO;
 import org.peter.chat.domain.vo.UserWithTokenVO;
-import org.peter.chat.domain.vo.common.FriendRequestVO;
+import org.peter.chat.domain.vo.FriendRequestVO;
 import org.peter.chat.domain.vo.common.UserCommonVO;
 import org.peter.chat.entity.UserEntity;
 
@@ -61,7 +61,7 @@ public interface UserService {
      * @param searchQuery
      * @return
      */
-    UserCommonVO queryByParams(UserSearchQuery searchQuery);
+    UserCommonVO queryByParams(UserSearchQO searchQuery);
 
     /**
      * 判断两个用户是否好友关系

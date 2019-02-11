@@ -1,4 +1,4 @@
-package org.peter.chat.domain.bo.query;
+package org.peter.chat.domain.qo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class UserSearchQuery {
+public class UserSearchQO {
     // 用户编号
     private String userId;
     // 用户帐号

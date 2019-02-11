@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.peter.chat.domain.bo.FriendRequestBO;
 import org.peter.chat.domain.bo.UserBO;
 import org.peter.chat.domain.bo.enums.FriendRequestType;
-import org.peter.chat.domain.vo.common.FriendRequestVO;
+import org.peter.chat.domain.vo.FriendRequestVO;
 import org.peter.chat.domain.vo.common.UserCommonVO;
 import org.peter.chat.entity.UserEntity;
 import org.peter.chat.enums.exceptionStatus.ChatExceptionStatus;

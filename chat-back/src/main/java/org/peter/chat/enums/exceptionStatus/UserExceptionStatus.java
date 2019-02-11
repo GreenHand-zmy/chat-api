@@ -14,7 +14,8 @@ public enum UserExceptionStatus implements BaseStatus {
     USERNAME_EXISTED_EXCEPTION(10202, "用户名已存在"),
     USER_NOT_EXISTED_EXCEPTION(10203, "不存在该用户"),
     INVALID_USER_ID(10204, "无效的用户编号"),
-    ILLEGAL_USER_ACCESS(10205, "非法的用户请求");
+    ILLEGAL_USER_ACCESS(10205, "非法的用户请求"),
+    NOT_FRIEND(10206, "不是你的好友");
 
     private int code;
     private String info;

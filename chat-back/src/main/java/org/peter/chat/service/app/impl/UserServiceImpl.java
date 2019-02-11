@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.n3r.idworker.Sid;
 import org.peter.chat.config.properties.ChatProperties;
 import org.peter.chat.domain.bo.FriendRequestBO;
-import org.peter.chat.domain.bo.query.UserSearchQuery;
+import org.peter.chat.domain.qo.UserSearchQO;
 import org.peter.chat.domain.vo.UserWithTokenVO;
-import org.peter.chat.domain.vo.common.FriendRequestVO;
+import org.peter.chat.domain.vo.FriendRequestVO;
 import org.peter.chat.domain.vo.common.UserCommonVO;
 import org.peter.chat.entity.FriendsRelationEntity;
 import org.peter.chat.entity.FriendsRequestEntity;
@@ -193,7 +193,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserCommonVO queryByParams(UserSearchQuery searchQuery) {
+    public UserCommonVO queryByParams(UserSearchQO searchQuery) {
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
         if (!StringUtils.isEmpty(searchQuery.getUserId())) {
             wrapper.eq("id", searchQuery.getUserId());

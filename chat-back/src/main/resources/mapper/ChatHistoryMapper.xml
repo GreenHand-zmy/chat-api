@@ -9,4 +9,12 @@
             #{id}
         </foreach>
     </update>
+
+    <select id="queryHistory" parameterType="org.peter.chat.mapper.qo.ChatHistoryMapperQO" resultType="org.peter.chat.entity.ChatHistoryEntity">
+       (SELECT * FROM `chat_history`
+        WHERE send_user_id = #{chatHistoryMapperQO.oneUserId} AND accept_user_id = #{chatHistoryMapperQO.otherUserId})
+          UNION
+       (SELECT * FROM `chat_history`
+        WHERE send_user_id = #{chatHistoryMapperQO.otherUserId} AND accept_user_id = #{chatHistoryMapperQO.oneUserId})
+    </select>
 </mapper>

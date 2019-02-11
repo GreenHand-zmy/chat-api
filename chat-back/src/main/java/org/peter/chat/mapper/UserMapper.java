@@ -1,7 +1,7 @@
 package org.peter.chat.mapper;
 
 import org.apache.ibatis.annotations.Param;
-import org.peter.chat.domain.vo.common.FriendRequestVO;
+import org.peter.chat.domain.vo.FriendRequestVO;
 import org.peter.chat.domain.vo.common.UserCommonVO;
 import org.peter.chat.entity.UserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

@@ -1,4 +1,4 @@
-package org.peter.chat.domain.vo.common;
+package org.peter.chat.domain.vo;
 
 import lombok.Data;
 
