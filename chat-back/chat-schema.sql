@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS `chat` DEFAULT CHARACTER SET utf8;
+
+USE `chat`;
+
 CREATE TABLE `chat_history` (
   `id` varchar(64) NOT NULL COMMENT '聊天记录编号',
   `send_user_id` varchar(64) NOT NULL COMMENT '发送消息的用户编号',
@@ -20,6 +24,7 @@ CREATE TABLE `friends_request` (
   `id` varchar(64) NOT NULL COMMENT '请求编号',
   `send_user_id` varchar(64) NOT NULL COMMENT '请求方',
   `accept_user_id` varchar(64) NOT NULL COMMENT '接受方',
+  `status` int(11) NOT NULL COMMENT '请求状态',
   `request_date_time` datetime NOT NULL COMMENT '请求时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
