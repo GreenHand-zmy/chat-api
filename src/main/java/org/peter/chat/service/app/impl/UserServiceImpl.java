@@ -131,7 +131,8 @@ public class UserServiceImpl implements UserService {
 
             UserEntity userUpdater = new UserEntity();
             userUpdater.setId(user.getId())
-                    .setQrcode(serverQrcodeFilePath);
+                    .setQrcode(serverQrcodeFilePath)
+                    .setGmtModified(LocalDateTime.now());
 
             userMapper.updateById(userUpdater);
             log.info("新用户设置二维码成功");
