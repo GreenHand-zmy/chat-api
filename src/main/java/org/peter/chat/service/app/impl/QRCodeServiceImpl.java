@@ -23,7 +23,7 @@ public class QRCodeServiceImpl implements QRCodeService {
 
     public String generateQrCodeAndUpload(String qrFilename, String qrContent) {
         String tmpdir = System.getProperty("java.io.tmpdir");
-        String qrCodeFilePath = tmpdir + File.pathSeparator + qrFilename;
+        String qrCodeFilePath = tmpdir + File.separator + qrFilename;
         // 在临时文件生成二维码图片文件
         qrCodeUtils.createQRCode(qrCodeFilePath, qrContent);
         MultipartFile qrMultipartFile = FileUtils.fileToMultipart(qrCodeFilePath);
