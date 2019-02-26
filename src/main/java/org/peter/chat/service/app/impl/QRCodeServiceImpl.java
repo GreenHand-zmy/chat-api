@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -22,7 +23,7 @@ public class QRCodeServiceImpl implements QRCodeService {
 
     public String generateQrCodeAndUpload(String qrFilename, String qrContent) {
         String tmpdir = System.getProperty("java.io.tmpdir");
-        String qrCodeFilePath = tmpdir + qrFilename;
+        String qrCodeFilePath = tmpdir + File.pathSeparator + qrFilename;
         // 在临时文件生成二维码图片文件
         qrCodeUtils.createQRCode(qrCodeFilePath, qrContent);
         MultipartFile qrMultipartFile = FileUtils.fileToMultipart(qrCodeFilePath);
