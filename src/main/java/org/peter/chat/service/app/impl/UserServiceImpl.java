@@ -2,6 +2,8 @@ package org.peter.chat.service.app.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.n3r.idworker.Sid;
@@ -21,6 +23,9 @@ import org.peter.chat.exception.BusinessException;
 import org.peter.chat.mapper.FriendsRelationMapper;
 import org.peter.chat.mapper.FriendsRequestMapper;
 import org.peter.chat.mapper.UserMapper;
+import org.peter.chat.netty.SessionHolder;
+import org.peter.chat.netty.enums.ResourceCode;
+import org.peter.chat.netty.protocol.RefurbishPacket;
 import org.peter.chat.service.ServiceThreadPool;
 import org.peter.chat.service.app.QRCodeService;
 import org.peter.chat.service.app.UserService;
@@ -92,6 +97,29 @@ public class UserServiceImpl implements UserService {
         return userWithTokenVO;
     }
 
+    /**
+     * 当用户登录成功之后的钩子函数
+     *
+     * @param userWithTokenVO
+     */
+    private void registerSuccessHook(UserWithTokenVO userWithTokenVO) {
+        // 放入线程异步处理的目的为:防止出现异常而导致用户的正常注册
+        serviceThreadPool.submit(() -> {
+            // 危险操作,只是为了好玩,用户登录后就直接添加了作者
+            String authorUsername = "adminzmy";
+            String userId = userWithTokenVO.getId();
+
+            // 查找作者用户名是否存在
+            UserCommonVO authorUserInfo = queryByUsername(authorUsername);
+            String authorUserInfoId = authorUserInfo.getId();
+            // 不能自己添加自己
+            if (!authorUserInfoId.equals(userId)) {
+                combineTwoUser(authorUserInfoId, userId);
+                log.info("设置彩蛋成功");
+            }
+        });
+    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public UserWithTokenVO userRegister(UserEntity user) {
@@ -113,11 +141,11 @@ public class UserServiceImpl implements UserService {
         user.setPassword(getEncryptionPassword(user.getPassword()));
 
         // 设置用户属性
-        user.setNickname(chatProperties.getRandomNickname()); //后期从配置文件中获取
+        user.setNickname(user.getNickname());
+        user.setClientId(user.getClientId());
         user.setFaceImage("");
         user.setFaceImageBig("");
         user.setQrcode("");
-
         user.setGmtCreated(LocalDateTime.now());
         userMapper.insert(user);
 
@@ -142,6 +170,8 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(user, userWithTokenVO);
 
         log.info("新用户username={} 注册成功", userWithTokenVO.getUsername());
+        // 设置彩蛋
+        registerSuccessHook(userWithTokenVO);
         return userWithTokenVO;
     }
 
@@ -318,6 +348,15 @@ public class UserServiceImpl implements UserService {
                 .setRequestDateTime(LocalDateTime.now());
 
         friendsRequestMapper.insert(friendsRequest);
+
+        // 发送好友请求刷新包
+        Channel session = SessionHolder.getSession(friendUserId);
+        if (session != null) {
+            RefurbishPacket refurbishPacket = new RefurbishPacket(ResourceCode
+                    .FRIEND_REQUEST_LIST.getResourceCode());
+
+            session.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(refurbishPacket)));
+        }
     }
 
     @Override
@@ -349,6 +388,16 @@ public class UserServiceImpl implements UserService {
         // 处理请求,同意后双方产生关联
         String acceptUserId = friendsRequest.getAcceptUserId();
         combineTwoUser(sendUserId, acceptUserId);
+
+        // todo 不知道是否需要改成异步的 发送刷新资源的消息给好友
+        Channel session = SessionHolder.getSession(sendUserId);
+        if (session != null) {
+            RefurbishPacket refurbishPacket = new RefurbishPacket(ResourceCode
+                    .FRIEND_RESOURCE.getResourceCode());
+
+            session.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(refurbishPacket)));
+        }
+
     }
 
     @Override

@@ -2,10 +2,7 @@ package org.peter.chat.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.peter.chat.domain.bo.FriendRequestBO;
-import org.peter.chat.domain.bo.UserBO;
-import org.peter.chat.domain.bo.UserResetPasswordBO;
-import org.peter.chat.domain.bo.UserShowInformationBO;
+import org.peter.chat.domain.bo.*;
 import org.peter.chat.domain.bo.enums.FriendRequestType;
 import org.peter.chat.domain.qo.HistorySearchQO;
 import org.peter.chat.domain.qo.UserSearchQO;
@@ -46,23 +43,29 @@ public class UserController {
     private ChatHistoryService chatHistoryService;
 
     @ApiOperation(value = "用户登录或注册")
-    @PostMapping("/registerOrLogin")
-    ResultBean<UserWithTokenVO> registerOrLogin(@Valid UserBO user) {
-        // 查询用户名是否已经存在
-        boolean usernameIsExist = userService
-                .queryUsernameIsExist(user.getUsername());
+    @PostMapping("/login")
+    ResultBean<UserWithTokenVO> login(@Valid @RequestBody UserLoginBO user) {
 
-        UserWithTokenVO userResult;
-        if (usernameIsExist) {
-            // 用户名存在,进行登录逻辑
-            userResult = userService.userLogin(user.getUsername(), user.getPassword());
-        } else {
-            UserEntity record = new UserEntity();
-            BeanUtils.copyProperties(user, record);
+        UserEntity record = new UserEntity();
+        BeanUtils.copyProperties(user, record);
 
-            // 进行注册逻辑
-            userResult = userService.userRegister(record);
-        }
+        // 进行登录逻辑
+        UserWithTokenVO userResult = userService.userLogin(user.getUsername(), user.getPassword());
+
+
+        return new ResultBean<UserWithTokenVO>().success(userResult);
+    }
+
+    @ApiOperation(value = "用户注册")
+    @PostMapping("/register")
+    ResultBean<UserWithTokenVO> register(@Valid @RequestBody UserRegisterBO user) {
+
+        UserEntity record = new UserEntity();
+        BeanUtils.copyProperties(user, record);
+
+        // 进行注册逻辑
+        UserWithTokenVO userResult = userService.userRegister(record);
+
         return new ResultBean<UserWithTokenVO>().success(userResult);
     }
 
@@ -73,6 +76,12 @@ public class UserController {
         return new ResultBean<UserCommonVO>().success(userCommonVO);
     }
 
+    @ApiOperation("查询自身信息")
+    @GetMapping("/myself")
+    ResultBean<UserCommonVO> getSelfUserInfo() {
+        UserCommonVO mySelfInfo = getCurrentUserSession();
+        return new ResultBean<UserCommonVO>().success(mySelfInfo);
+    }
 
     @ApiOperation("修改用户常规信息")
     @PutMapping("/information/update")
@@ -190,7 +199,7 @@ public class UserController {
 
 
     @ApiOperation("用户查询聊天记录")
-    @GetMapping("/history")
+    @PostMapping("/history")
     ResultBean<PageVO<ChatHistoryVO>> getHistory(@RequestBody PageQO<HistorySearchQO> pageQO) {
         UserCommonVO currentUserSession = getCurrentUserSession();
 

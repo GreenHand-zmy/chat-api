@@ -3,7 +3,8 @@ package org.peter.chat.netty.enums;
 public enum PacketType {
     // 1-100预留给系统相关的包
     CONNECT_PACKET(1, "连接包"),
-    HEART_BEAT_PACKET(2,"心跳包"),
+    HEART_BEAT_PACKET(2, "心跳包"),
+    REFURBISH_PACKET(3, "刷新资源包"),
     // 101-200预留给消息类型的包
     NORMAL_MSG_PACKET(101, "普通的定向聊天包"),
     NORMAL_MSG_LIST_PACKET(102, "普通的定向聊天包集合"),
