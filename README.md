@@ -1,4 +1,4 @@
-# chat-fron
+# chat-api
 
 #### 项目介绍
 该项目是chat聊天IM app的服务端项目,架构为springBoot + SpringMVC + Mybatis + netty构建而成。
