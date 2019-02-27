@@ -1,0 +1,44 @@
+
+server:
+  port: 8080
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: org.peter.chat.entity
+  config-location: classpath:mybatis-config.xml
+chat:
+  webSocket:
+    port: 8090
+    websocketPath: /ws
+  login-interceptor:
+    include:
+      - /**
+#      - /error
+    exclude:
+      - /user/login
+      - /user/register
+      - /swagger-ui.html
+      - /swagger-resources/**
+      - /webjars/**
+      - /v2/**
+      - /swagger-ui.html/**
+      - /error
+      - /null/**
+  setting:
+    defaultNicknameList:
+      美到没朋友,逺来是你,淡淡的优雅,黑名单。,龍飛鳳ゝ舞,闹钟你别闹→_→,
+      做個沒心沒肺菂尐女亽,我还是我自己,★北极殿战队★,他唇毁她纯,不过如此▁,
+      帅有什么用,能当饭吃么,我在坚持阿,红黄蓝绿黑丶,厌人心,奥特曼打怪兽
+# ===================================================================
+# 分布式文件系统FDFS配置
+# ===================================================================
+fdfs:
+  so-timeout: 1501
+  connect-timeout: 601
+  thumb-image:             #缩略图生成参数
+    width: 80
+    height: 80
+  tracker-list:            #TrackerList参数,支持多个
+    - fdfs服务器地址:22122
+spring:
+  profiles:
+    active: dev

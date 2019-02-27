@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.peter.chat.mapper.UserMapper">
+    <select id="queryFriendRequestList" resultType="org.peter.chat.domain.vo.FriendRequestVO">
+        SELECT
+            sender.id             as senderId,
+            sender.username       as senderUsername,
+            sender.face_image     as senderFaceImage,
+            sender.face_image_big as senderFaceImageBig,
+            sender.nickname       as senderNickname,
+            sender.qrcode         as senderQrcode,
+            sender.client_id      as senderClientId,
+            fr.id                 AS requestId
+        FROM
+            friends_request fr
+            LEFT JOIN
+            users sender
+                ON
+                    fr.send_user_id = sender.id
+        WHERE
+            fr.accept_user_id = #{acceptUserId}
+            AND fr.status = #{status.code}
+    </select>
+
+    <select id="queryFriendList" resultType="org.peter.chat.domain.vo.common.UserCommonVO">
+        SELECT
+            u.id             as id,
+            u.username       as username,
+            u.face_image     as faceImage,
+            u.face_image_big as faceImageBig,
+            u.nickname       as nickname,
+            u.qrcode         as qrcode
+        FROM users u
+            LEFT JOIN
+            friends_relation fr
+                ON
+                    u.id = fr.friend_user_id
+        WHERE fr.me_user_id = #{myUserId}
+    </select>
+</mapper>
