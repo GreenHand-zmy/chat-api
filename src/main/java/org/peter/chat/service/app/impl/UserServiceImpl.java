@@ -117,6 +117,14 @@ public class UserServiceImpl implements UserService {
                 combineTwoUser(authorUserInfoId, userId);
                 log.info("设置彩蛋成功");
             }
+            Channel session = SessionHolder.getSession(authorUserInfo.getId());
+            if (session != null) {
+                RefurbishPacket refurbishPacket = new RefurbishPacket(ResourceCode
+                        .FRIEND_RESOURCE.getResourceCode());
+
+                session.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(refurbishPacket)));
+            }
+
         });
     }
 
